@@ -1,39 +1,19 @@
 function ProductTable({ products, deleteProduct, onEdit }) {
+ 
+  products = [
+    {
+      id: 1,
+      name: "Tomatoes",
+      stock: 60
+    }
+  ]
+ 
   return (
     <div className="bg-white rounded-xl shadow">
-      {/* Header */}
-      <div className="flex justify-between items-center p-6 border-b">
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900">
-            Live Inventory Registry
-          </h2>
-          <p className="text-slate-500 text-sm">
-            Monitor all inventory items
-          </p>
-        </div>
-
-        <div className="flex gap-3">
-          <input
-            type="text"
-            placeholder="Search product..."
-            className="border rounded-lg px-4 py-2 w-72"
-          />
-
-          <button className="bg-slate-900 text-white px-4 py-2 rounded-lg">
-            Force Sync
-          </button>
-
-          <button className="border px-4 py-2 rounded-lg">
-            Export CSV
-          </button>
-        </div>
-      </div>
-
       {/* Table */}
       <table className="w-full">
         <thead className="bg-slate-100">
           <tr>
-            <th className="text-left px-6 py-4">Product ID</th>
             <th className="text-left px-6 py-4">Product Name</th>
             <th className="text-left px-6 py-4">Stock</th>
             <th className="text-left px-6 py-4">Status</th>
@@ -54,8 +34,6 @@ function ProductTable({ products, deleteProduct, onEdit }) {
           ) : (
             products.map((product) => (
               <tr key={product.id} className="border-t">
-                <td className="px-6 py-4">{product.id}</td>
-
                 <td className="px-6 py-4 font-medium">
                   {product.name}
                 </td>

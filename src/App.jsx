@@ -1,27 +1,39 @@
 import { useState } from "react";
 import "./App.css";
-import Landing from "./landing";
-import Signup from "./signup";
-import Dashboard from "./dashboard";
-import Login from "./Login";
+// import Landing from "./landing";
+// import Signup from "./signup";
+// import Dashboard from "./dashboard";
+// import Login from "./Login";
+import Input from "./components/Input";
+import Login from "./pages/Login"
+
+import {MdOutlinePerson} from 'react-icons/md'
+import Signup from "./pages/Signup";
+import Card from "./components/Card";
+import Dashboard from "./pages/Dashboard";
 
 function App() {
   const [page, setPage] = useState("login"); // default page
 
   return (
     <div className="App">
-      {page === "landing" && <Landing />}
+      {/* {page === "landing" && <Landing />}
       {page === "signup" && <Signup />}
       {page === "dashboard" && <Dashboard />}
-      {page === "login" && <Login />}
+      {page === "login" && <Login />} */}
+
+      <Login />
+      <Dashboard />
+      <Signup />
+      
 
       {/* Simple navigation buttons for testing */}
-      <div className="mt-4 flex gap-2 justify-center">
+      {/* <div className="mt-4 flex gap-2 justify-center">
         <button onClick={() => setPage("landing")}>Landing</button>
         <button onClick={() => setPage("signup")}>Signup</button>
         <button onClick={() => setPage("dashboard")}>Dashboard</button>
         <button onClick={() => setPage("login")}>Login</button>
-      </div>
+      </div> */}
     </div>
   );
 }

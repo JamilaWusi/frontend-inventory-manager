@@ -1,9 +1,11 @@
 import { useState } from "react";
-import Navbar from "./components/Navbar.jsx";
-import Sidebar from "./components/Sidebar.jsx";
-import OverViewCard from "./components/OverViewCard.jsx";
-import ProductTable from "./components/ProductTable.jsx";
-import AddProductModal from "./components/AddProductModal.jsx";
+import Navbar from "../components/Navbar.jsx";
+import Sidebar from "../components/Sidebar.jsx";
+import OverViewCard from "../components/OverViewCard.jsx";
+import ProductTable from "../components/ProductTable.jsx";
+import AddProductModal from "../components/AddProductModal.jsx";
+import Card from "../components/Card.jsx";
+import { RiShoppingCart2Fill } from "react-icons/ri";
 
 function Dashboard() {
   // Products
@@ -37,14 +39,14 @@ function Dashboard() {
   return (
     <div className="min-h-screen bg-slate-100">
       <Navbar />
-
+      {/* 
       <div className="flex">
         <Sidebar />
 
         <main className="flex-1 p-8">
 
           {/* Header */}
-          <div className="flex justify-between items-center mb-8">
+      {/* <div className="flex justify-between items-center mb-8">
             <div>
               <h1 className="text-3xl font-bold text-slate-900">
                 System Overview
@@ -63,19 +65,19 @@ function Dashboard() {
             >
               + Add Product
             </button>
-          </div>
+          </div> */}
 
-          <OverviewCards />
+      {/* <OverviewCards /> */}
 
-          <div className="mt-8">
+      {/* <div className="mt-8">
             <ProductTable
               products={products}
               deleteProduct={deleteProduct}
               onEdit={handleEdit}
             />
-          </div>
+          </div> */}
 
-          {showModal && (
+      {/* {showModal && (
             <AddProductModal
               addProduct={addProduct}
               editingProduct={editingProduct}
@@ -85,8 +87,31 @@ function Dashboard() {
               }}
             />
           )}
-        </main>
-      </div>
+        </main> */}
+      {/* </div> */}
+      <main className="p-10">
+        <div className="flex gap-5">
+          <Card
+          icon={<RiShoppingCart2Fill />}
+            stat={20}
+            title={"Products"}
+            desc={"All products in your database"}
+          />
+          <Card
+            stat={20}
+            title={"Products"}
+            desc={"All products in your database"}
+          />
+          <Card
+            stat={20}
+            title={"Products"}
+            desc={"All products in your database"}
+          />
+
+        </div>
+
+        <ProductTable />
+      </main>
     </div>
   );
 }

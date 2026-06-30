@@ -1,7 +1,7 @@
 import { useState } from "react";
-import UsersManager from "./users.jsx";
-import ProductsManager from "./product.jsx";
-import StockTransactions from "./stockTransactions.jsx";
+import UsersManager from "./Users.jsx";
+import ProductsManager from "./Product.jsx";
+import StockTransactions from "./StockTransactions.jsx";
 
 export default function AdminPanel({
   currentUser,

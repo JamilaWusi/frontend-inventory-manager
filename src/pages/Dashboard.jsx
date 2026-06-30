@@ -20,8 +20,7 @@ function Dashboard() {
   // Add Product
   const addProduct = (newProduct) => {
     setProducts((prev) => [...prev, newProduct]);
-    setShowModal(false);
-  };
+    setShowModal(false);  };
 
   // Delete Product
   const deleteProduct = (id) => {
@@ -37,8 +36,26 @@ function Dashboard() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="flex gap-6">
+      <Sidebar />
+   
+    <div className="flex-1 flex-col bg-slate-100">
       <Navbar />
+      <div className="mb-8">
+  <h1 className="text-3xl gap-4 h-[66] w-[380] font-bold text-slate-900">
+    System Overview
+  </h1>
+
+  <p className="text-slate-500">
+    Real-time inventory monitoring
+  </p>
+</div>
+
+       
+    
+    
+  
+
       {/* 
       <div className="flex">
         <Sidebar />
@@ -89,7 +106,7 @@ function Dashboard() {
           )}
         </main> */}
       {/* </div> */}
-      <main className="p-10">
+      <main className="p-10 ml-6 flex-1 ">
         <div className="flex gap-5">
           <Card
           icon={<RiShoppingCart2Fill />}
@@ -112,6 +129,7 @@ function Dashboard() {
 
         <ProductTable />
       </main>
+       </div>
     </div>
   );
 }

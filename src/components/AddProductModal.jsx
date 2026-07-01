@@ -45,48 +45,63 @@ function AddProductModal({
   };
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-      <div className="bg-white p-6 rounded-lg w-96 shadow-lg">
+    <div className="fixed inset-0 flex items-center justify-center bg-slate-950/45 px-3">
+      <div className="w-full max-w-md rounded-[24px] border border-slate-200 bg-white p-6 shadow-2xl">
+        <div className="mb-5">
+          <h2 className="text-2xl font-semibold text-slate-900">
+            {editingProduct ? "Edit Product" : "Add Product"}
+          </h2>
+          <p className="mt-1 text-sm text-slate-600">
+            {editingProduct ? "Update the selected product details below." : "Create a new product entry with stock details."}
+          </p>
+        </div>
 
-        <h2 className="text-2xl font-bold mb-4">
-          {editingProduct ? "Edit Product" : "Add Product"}
-        </h2>
+        <div className="space-y-4">
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-600">Product ID</label>
+            <input
+              type="text"
+              placeholder="Product ID"
+              value={productId}
+              onChange={(e) => setProductId(e.target.value)}
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-300 focus:ring-2 focus:ring-slate-200"
+            />
+          </div>
 
-        <input
-          type="text"
-          placeholder="Product ID"
-          value={productId}
-          onChange={(e) => setProductId(e.target.value)}
-          className="w-full border rounded p-2 mb-3"
-        />
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-600">Product Name</label>
+            <input
+              type="text"
+              placeholder="Product Name"
+              value={productName}
+              onChange={(e) => setProductName(e.target.value)}
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-300 focus:ring-2 focus:ring-slate-200"
+            />
+          </div>
 
-        <input
-          type="text"
-          placeholder="Product Name"
-          value={productName}
-          onChange={(e) => setProductName(e.target.value)}
-          className="w-full border rounded p-2 mb-3"
-        />
+          <div>
+            <label className="mb-1 block text-sm font-medium text-slate-600">Stock</label>
+            <input
+              type="number"
+              placeholder="Stock"
+              value={stock}
+              onChange={(e) => setStock(e.target.value)}
+              className="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-300 focus:ring-2 focus:ring-slate-200"
+            />
+          </div>
+        </div>
 
-        <input
-          type="number"
-          placeholder="Stock"
-          value={stock}
-          onChange={(e) => setStock(e.target.value)}
-          className="w-full border rounded p-2 mb-4"
-        />
-
-        <div className="flex justify-end gap-3">
+        <div className="mt-6 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
           <button
             onClick={onClose}
-            className="px-4 py-2 bg-gray-300 rounded"
+            className="rounded-xl border border-slate-200 px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
           >
             Cancel
           </button>
 
           <button
             onClick={handleSave}
-            className="px-4 py-2 bg-green-600 text-white rounded"
+            className="rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-slate-800"
           >
             {editingProduct ? "Update Product" : "Add Product"}
           </button>

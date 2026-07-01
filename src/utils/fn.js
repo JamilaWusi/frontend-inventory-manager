@@ -42,3 +42,29 @@ export async function login(data) {
       console.log(error)
    }
 }
+
+export async function getProfile(token) {
+    try {
+        const res = await fetch(`${baseUrl}/auth/profile`, {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`
+            }
+        })
+
+        if (!res.ok) {
+            const error = new Error("Request failed");
+            error.statusCode = res.status;
+            error.data = await res.json().catch(() => null);
+
+            throw error;
+        }
+
+        const responseData = await res.json()
+
+        return responseData
+
+    } catch (error) {
+        console.log(error)
+    }
+}

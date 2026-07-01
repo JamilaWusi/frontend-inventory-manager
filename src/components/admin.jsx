@@ -1,10 +1,45 @@
 import { useEffect, useState } from "react";
-import Users from "./Users.jsx";
-//import StockTransaction from "../components/StockTransactions.jsx";
-import Button from "./Button.jsx";
-import Modal from "./Modal.jsx";
-import Inventory from "../pages/Inventory.jsx";
+import StockTransactions from "./StockTransactions.jsx";
 
+function UsersManager({ users = [], currentUser }) {
+  return (
+    <div className="space-y-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h2 className="text-xl font-semibold text-slate-900">User Access</h2>
+          <p className="text-sm text-slate-600">Manage staff and admin access for {currentUser?.businessName || "your business"}.</p>
+        </div>
+      </div>
+
+      <div className="overflow-x-auto rounded-xl border border-slate-200">
+        <table className="min-w-full text-left text-sm">
+          <thead className="bg-slate-50 text-slate-600">
+            <tr>
+              <th className="px-4 py-3 font-medium">Name</th>
+              <th className="px-4 py-3 font-medium">Email</th>
+              <th className="px-4 py-3 font-medium">Role</th>
+              <th className="px-4 py-3 font-medium">Status</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-slate-200 bg-white">
+            {users.length > 0 ? users.map((user) => (
+              <tr key={user.id || user.email}>
+                <td className="px-4 py-3 font-medium text-slate-900">{user.firstName} {user.lastName}</td>
+                <td className="px-4 py-3 text-slate-700">{user.email}</td>
+                <td className="px-4 py-3 text-slate-700">{user.role}</td>
+                <td className="px-4 py-3 text-slate-700">Active</td>
+              </tr>
+            )) : (
+              <tr>
+                <td colSpan="4" className="px-4 py-6 text-center text-slate-500">No users have been added yet.</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
 
 function ProductsManager({ products = [], currentUser }) {
   const productList = products.length > 0 ? products : [
@@ -278,15 +313,7 @@ export default function AdminPanel({
               currentUser={currentUser}
             />
           )}
-          {activeTab === "transactions" && (
-            <StockTransactions
-              products={products}
-              transactions={transactions}
-              onAddTransaction={onAddTransaction}
-              onDeleteTransaction={onDeleteTransaction}
-              currentUser={currentUser}
-            />
-          )}
+          {activeTab === "transactions" && <StockTransactions />}
         </div>
       </div>
     </div>

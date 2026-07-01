@@ -27,63 +27,52 @@ function Navbar() {
   ]
 
   return (
-    <nav className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
-
-      {/* Left Section */}
-      <div className="flex items-center gap-10">
-        <h1 className="text-2xl font-bold text-green-600">
-          Stock Track
-        </h1>
-
-        {/* Navigation Links */}
+    <nav className="border-b border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur sm:px-6">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
         <div className="flex items-center gap-6">
-          {
-            navLinks.map(nav => {
-              return (
-                <NavLink to={nav.to}
-                  className={({ isActive }) =>
-                    isActive ? "text-amber-300" : ``
-                  }
-                >
-                 {nav.label}
-                </NavLink>
-              )
-            })
-          }
+          <h1 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
+            Stock <span className="text-amber-500">Track</span>
+          </h1>
 
-        </div>
-      </div>
-
-      {/* Right Section */}
-      <div className="flex items-center gap-4">
-
-        {/* Search */}
-        <div className="flex items-center border border-gray-300 rounded-lg px-3 py-2 gap-2">
-          <FiSearch className="text-gray-500" />
-
-          <input
-            type="text"
-            placeholder="Search..."
-            className="ml-2 outline-none text-sm"
-          />
+          <div className="hidden items-center gap-2 md:flex">
+            {navLinks.map((nav) => (
+              <NavLink
+                key={nav.to}
+                to={nav.to}
+                className={({ isActive }) =>
+                  `rounded-full px-3 py-2 text-sm font-medium transition ${isActive ? "bg-slate-900 text-white" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`
+                }
+              >
+                {nav.label}
+              </NavLink>
+            ))}
+          </div>
         </div>
 
-        {/* Notification */}
-        <button className="p-2 rounded-lg hover:bg-gray-100">
-          <FiBell size={20} />
-        </button>
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className="hidden items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 sm:flex">
+            <FiSearch className="text-slate-500" />
+            <input
+              type="text"
+              placeholder="Search..."
+              className="w-28 bg-transparent text-sm outline-none placeholder:text-slate-400 sm:w-36"
+            />
+          </div>
 
-        {/* Admin */}
-        <NavLink
-          to="/admin"
-          className={({ isActive }) =>
-            `flex items-center gap-2 rounded-lg px-3 py-2 transition ${isActive ? "bg-amber-50 text-amber-600" : "text-gray-700 hover:bg-gray-100"}`
-          }
-        >
-          <FiUser />
-          <span>Admin</span>
-        </NavLink>
+          <button className="rounded-full p-2 text-slate-600 transition hover:bg-slate-100 hover:text-slate-900">
+            <FiBell size={18} />
+          </button>
 
+          <NavLink
+            to="/admin"
+            className={({ isActive }) =>
+              `flex items-center gap-2 rounded-full px-3 py-2 text-sm font-medium transition ${isActive ? "bg-amber-50 text-amber-700" : "text-slate-600 hover:bg-slate-100 hover:text-slate-900"}`
+            }
+          >
+            <FiUser />
+            <span className="hidden sm:inline">Admin</span>
+          </NavLink>
+        </div>
       </div>
     </nav>
   );

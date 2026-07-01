@@ -10,7 +10,7 @@ function Dashboard() {
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-4xl font-bold tracking-tight text-slate-900">System Overview</h1>
+        <h1 className="text-4xl font-bold tracking-tight text-slate-900">Welcome to StockTrcak</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
           Real-time inventory monitoring and quick access to product, supplier, and stock transaction summaries.
         </p>
@@ -20,7 +20,7 @@ function Dashboard() {
         <Card
           icon={<RiShoppingCart2Fill />}
           stat={20}
-          title="Products"
+          title="Products" className="font-semibold"
           desc="All products in your database"
         />
         <Card

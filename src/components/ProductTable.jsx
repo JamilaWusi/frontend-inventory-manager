@@ -54,11 +54,16 @@ function ProductTable() {
   }
 
   return (
-    <div className="mt-6 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-xl">
-      <div className="border-b border-slate-200 bg-slate-50 px-5 py-4">
+    <div className="mt-6 overflow-hidden rounded-[28px] border border-slate-200 bg-white shadow-[0_18px_45px_-24px_rgba(15,23,42,0.45)]">
+      <div className="border-b border-slate-200 bg-slate-50 px-6 py-4">
         <div className="flex items-center gap-2">
-          <MdOutlineInventory2 size={20} color="#0F172A" />
-          <h2 className="text-lg font-semibold text-slate-900">Inventory Summary</h2>
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-900 text-white">
+            <MdOutlineInventory2 size={18} />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold text-slate-900">Inventory Summary</h2>
+            <p className="text-sm text-slate-500">Live stock overview with clear status indicators</p>
+          </div>
         </div>
       </div>
 
@@ -71,25 +76,25 @@ function ProductTable() {
           <table className="min-w-full text-left text-sm text-slate-700">
             <thead className="bg-slate-50 text-slate-500">
               <tr>
-                <th className="px-5 py-3 font-semibold">Product Name</th>
-                <th className="px-5 py-3 font-semibold">Status</th>
-                <th className="px-5 py-3 font-semibold">Critical Stock Alert</th>
-                <th className="px-5 py-3 font-semibold">Category</th>
-                <th className="px-5 py-3 font-semibold">Delete Product</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em]">Product Name</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em]">Status</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em]">Critical Stock Alert</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em]">Category</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-[0.2em]">Delete Product</th>
               </tr>
             </thead>
             <tbody>
               {products.map((product) => (
-                <tr key={product.id} className="border-t border-slate-200 hover:bg-slate-50">
-                  <td className="px-5 py-4 font-semibold text-slate-900">{product.productName}</td>
-                  <td className="px-5 py-4">
+                <tr key={product.id} className="border-t border-slate-200 bg-white hover:bg-slate-50">
+                  <td className="px-6 py-4 font-semibold text-slate-900">{product.productName}</td>
+                  <td className="px-6 py-4">
                     <span className={`rounded-full px-3 py-1 text-xs font-semibold ${getStatusStyles(product.status)}`}>
                       {product.status}
                     </span>
                   </td>
-                  <td className="px-5 py-4 text-slate-600">{getCriticalStockAlert(product.currentStockQuantity)}</td>
-                  <td className="px-5 py-4 text-slate-600">{product.category}</td>
-                  <td className="px-5 py-4">
+                  <td className="px-6 py-4 text-slate-600">{getCriticalStockAlert(product.currentStockQuantity)}</td>
+                  <td className="px-6 py-4 text-slate-600">{product.category}</td>
+                  <td className="px-6 py-4">
                     <button
                       type="button"
                       onClick={() => deleteProduct(product.id)}

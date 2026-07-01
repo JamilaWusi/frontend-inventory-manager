@@ -1,3 +1,4 @@
+
 export default function Button({ children, type = "button", onClick, disabled=false }) {
     return (
         <button
@@ -9,4 +10,4 @@ export default function Button({ children, type = "button", onClick, disabled=fa
             {children}
         </button>
     )
-}
+  }

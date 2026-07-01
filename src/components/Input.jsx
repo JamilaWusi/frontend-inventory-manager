@@ -2,7 +2,20 @@ import { useState } from "react"
 import { FaEye } from 'react-icons/fa'
 import { HiEyeOff } from 'react-icons/hi'
 
-export default function Input({ icon, label, id, placeholder, type, value, onChange, isPasswordType = false }) {
+export default function Input({
+    icon,
+    label,
+    id,
+    placeholder,
+    type = "text",
+    value,
+    onChange,
+    isPasswordType = false,
+    className = "",
+    inputClassName = "",
+    readOnly = false,
+    disabled = false,
+}) {
 
     const [isPasswordVisible, setIsPasswordVisible] = useState(false)
 
@@ -15,37 +28,28 @@ export default function Input({ icon, label, id, placeholder, type, value, onCha
     }
 
     return (
-        <div className="space-y-1">
-            <label htmlFor={id}
-                className="font-medium text-sm uppercase text-[#45474C]"
-            >{label}</label>
-            <div className="flex border border-[#C5C6CD] h-12 rounded-lg items-center py-3.5 px-4 gap-3.5">
+        <div className={`space-y-2 ${className}`}>
+            <label htmlFor={id} className="block text-sm font-semibold uppercase tracking-[0.16em] text-slate-500">
+                {label}
+            </label>
+            <div className="flex items-center gap-3 rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 shadow-sm transition focus-within:border-slate-300 focus-within:ring-2 focus-within:ring-slate-200">
                 {icon}
                 <input
                     id={id}
-                    type={isPasswordType ?
-                        isPasswordVisible ? "text" : "password"
-                        : type}
+                    type={isPasswordType ? (isPasswordVisible ? "text" : "password") : type}
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
-                    className="border-0 focus:outline-none focus:ring-0 focus:border-transparent flex-1"
-                    required
+                    readOnly={readOnly}
+                    disabled={disabled}
+                    className={`flex-1 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400 ${inputClassName}`}
                 />
-                {
-                    isPasswordType && (
-                        <>
-                            {isPasswordVisible ?
-                                <button type="button" onClick={hide} className="cursor-pointer">
-                                    <FaEye size={24} color="#75777D" />
-                                </button> :
-                                <button type="button" onClick={show}
-                                    className="cursor-pointer"
-                                >
-                                    <HiEyeOff size={24} color="#75777D" /></button>}
-                        </>
-                    )
-                }
+
+                {isPasswordType && (
+                    <button onClick={isPasswordVisible ? hide : show} type="button" className="text-slate-500 transition hover:text-slate-800">
+                        {isPasswordVisible ? <FaEye size={20} /> : <HiEyeOff size={20} />}
+                    </button>
+                )}
             </div>
         </div>
     )

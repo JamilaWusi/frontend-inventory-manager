@@ -8,43 +8,37 @@ import { Link } from "react-router";
 function Dashboard() {
 
   return (
-    <>
-      <div className="mb-8">
-        <h1 className="text-3xl gap-4 h-[66] w-[380] font-bold text-slate-900">
-          System Overview
-        </h1>
-
-        <p className="text-slate-500">
-          Real-time inventory monitoring
+    <div className="space-y-8">
+      <div>
+        <h1 className="text-4xl font-bold tracking-tight text-slate-900">System Overview</h1>
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
+          Real-time inventory monitoring and quick access to product, supplier, and stock transaction summaries.
         </p>
       </div>
-      <div className="flex gap-5">
+
+      <div className="grid gap-5 md:grid-cols-3">
         <Card
           icon={<RiShoppingCart2Fill />}
           stat={20}
-          title={"Products"}
-          desc={"All products in your database"}
+          title="Products"
+          desc="All products in your database"
         />
         <Card
-          stat={20}
-          title={"Products"}
-          desc={"All products in your database"}
+          icon={<RiShoppingCart2Fill />}
+          stat={12}
+          title="Suppliers"
+          desc="Active supplier relationships"
         />
         <Card
-          stat={20}
-          title={"Products"}
-          desc={"All products in your database"}
+          icon={<RiShoppingCart2Fill />}
+          stat={7}
+          title="Critical Alerts"
+          desc="Products needing restock"
         />
-
       </div>
 
-      <p>Hello</p>
-
-      <Link to="/login">Logout</Link>
-
       <ProductTable />
-
-    </>
+    </div>
   );
 }
 

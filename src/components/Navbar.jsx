@@ -19,6 +19,10 @@ function Navbar() {
     {
       to: "/inventory",
       label: "Inventory"
+    },
+    {
+      to: "/admin",
+      label: "Admin"
     }
   ]
 
@@ -70,10 +74,15 @@ function Navbar() {
         </button>
 
         {/* Admin */}
-        <button className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100">
+        <NavLink
+          to="/admin"
+          className={({ isActive }) =>
+            `flex items-center gap-2 rounded-lg px-3 py-2 transition ${isActive ? "bg-amber-50 text-amber-600" : "text-gray-700 hover:bg-gray-100"}`
+          }
+        >
           <FiUser />
           <span>Admin</span>
-        </button>
+        </NavLink>
 
       </div>
     </nav>

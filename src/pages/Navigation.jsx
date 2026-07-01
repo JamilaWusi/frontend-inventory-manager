@@ -6,6 +6,7 @@ import Products from "./Products";
 import Inventory from "./Inventory";
 import Container from "../components/Container";
 import Login from "./Login";
+import Admin from "../components/Admin";
 
 export default function Navigation() {
     return (
@@ -28,6 +29,12 @@ export default function Navigation() {
                     path="/inventory"
                     element={<Inventory />}
                 />
+
+                <Route
+                    path="/admin"
+                    element={<Admin />}
+                />  
+
 
                 <Route
                     path="/*"

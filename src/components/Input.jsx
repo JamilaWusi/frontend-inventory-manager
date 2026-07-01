@@ -30,15 +30,18 @@ export default function Input({ icon, label, id, placeholder, type, value, onCha
                     onChange={onChange}
                     placeholder={placeholder}
                     className="border-0 focus:outline-none focus:ring-0 focus:border-transparent flex-1"
+                    required
                 />
                 {
                     isPasswordType && (
                         <>
                             {isPasswordVisible ?
-                                <button onClick={hide}>
+                                <button type="button" onClick={hide} className="cursor-pointer">
                                     <FaEye size={24} color="#75777D" />
                                 </button> :
-                                <button onClick={show}>
+                                <button type="button" onClick={show}
+                                    className="cursor-pointer"
+                                >
                                     <HiEyeOff size={24} color="#75777D" /></button>}
                         </>
                     )

@@ -1,35 +1,40 @@
 import { useState } from "react";
 import Input from "../components/Input";
-import { MdOutlineMail, MdOutlinePersonOutline } from "react-icons/md";
+import { MdOutlineMail, MdOutlinePersonOutline, MdOutlinePhone } from "react-icons/md";
 import { RiLockPasswordLine } from "react-icons/ri";
 import Button from "../components/Button";
 import { FaArrowRight } from "react-icons/fa";
+import { register } from "../utils/fn";
+import Loader from "../components/Loader";
+import { Link } from "react-router";
 
-function Signup({ onSignup, onBack }) {
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [role, setRole] = useState("Owner");
-  const [password, setPassword] = useState("");
-  const [businessName, setBusinessName] = useState("");
+function Signup() {
 
-  const handleSubmit = (e) => {
+  const [registerData, setRegisterData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phoneNumber: "",
+    password: "",
+  })
+  const [isLoading, setIsLoading] = useState(false)
+
+  async function handleSubmit(e) {
     e.preventDefault();
-    if (!firstName || !email || !password) return;
-    onSignup({
-      id: Date.now(),
-      firstName,
-      lastName,
-      email,
-      phoneNumber,
-      password,
-      role,
-      businessName,
-      dateCreated: new Date().toLocaleString(),
-      dateUpdated: new Date().toLocaleString(),
-    });
+    try {
+      setIsLoading(true)
+      const res = await register(registerData)
+      console.log(res)
+      if (res) {
+        console.log(res)
+      }
+    } catch (error) {
+      console.log(error)
+    } finally {
+      setIsLoading(false)
+    }
   };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-md space-y-6">
@@ -44,13 +49,15 @@ function Signup({ onSignup, onBack }) {
             <p>Start optimizing your supply chain today.</p>
           </div>
 
-          <form className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6">
             <Input
               label={"First Name"}
               id={"firstName"}
               placeholder={"Enter first name"}
               type={"text"}
               icon={<MdOutlinePersonOutline size={24} color="#75777D" />}
+              onChange={(e) => setRegisterData({ ...registerData, firstName: e.target.value })}
+              value={registerData.firstName}
             />
 
             <Input
@@ -59,6 +66,8 @@ function Signup({ onSignup, onBack }) {
               placeholder={"Enter last name"}
               type={"text"}
               icon={<MdOutlinePersonOutline size={24} color="#75777D" />}
+              onChange={(e) => setRegisterData({ ...registerData, lastName: e.target.value })}
+              value={registerData.lastName}
             />
 
             <Input
@@ -67,6 +76,18 @@ function Signup({ onSignup, onBack }) {
               placeholder={"Enter email address"}
               type={"email"}
               icon={<MdOutlineMail size={24} color="#75777D" />}
+              onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+              value={registerData.email}
+            />
+
+            <Input
+              label={"Phone Number"}
+              id={"phoneNumber"}
+              placeholder={"Enter phone number"}
+              type={"tel"}
+              icon={<MdOutlinePhone size={24} color="#75777D" />}
+              onChange={(e) => setRegisterData({ ...registerData, phoneNumber: e.target.value })}
+              value={registerData.phoneNumber}
             />
 
             <Input
@@ -75,18 +96,28 @@ function Signup({ onSignup, onBack }) {
               placeholder={"Enter password"}
               icon={<RiLockPasswordLine size={24} color="#75777D" />}
               isPasswordType={true}
+              onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+              value={registerData.password}
             />
 
             {/* Sign In Button */}
-            <Button>
-              Get Started
-              <FaArrowRight />
+            <Button
+              disabled={isLoading}
+              type="submit">
+              {
+                isLoading ? <Loader /> : (
+                  <>
+                    Get Started
+                    <FaArrowRight />
+                  </>
+                )
+              }
             </Button>
           </form>
 
           <div className="text-center text-sm text-gray-600 pt-6 border-t border-[#C5C6CD]">
-           Already have an account? <span className="font-semibold">Login here</span>
-     
+            Already have an account? <Link to="/login" className="font-semibold">Login here</Link>
+
           </div>
         </div>
       </div>

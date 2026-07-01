@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseURL = 'https://shop-inventory-manager-2t9a.onrender.com'
+const baseURL = 'https://shop-inventory-manager-1.onrender.com'
 
 const client = axios.create({
     baseURL,
@@ -11,25 +11,39 @@ const client = axios.create({
 
 client.interceptors.request.use(
     (config) => {
-
         const token = sessionStorage.getItem('myToken');
 
+        // ensure headers object exists
+        config.headers = config.headers || {};
+
         if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
+            // avoid double-prefixing Bearer
+            config.headers['Authorization'] = token.startsWith('Bearer ') ? token : `Bearer ${token}`;
         }
+
         return config;
     },
-    (error) => {
-        return Promise.reject(error);
-    }
+    (error) => Promise.reject(error)
 );
 
 
 client.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 401) {
-            console.error('Unauthorized! Redirecting to login...');
+        const status = error?.response?.status;
+        if (status === 401) {
+            // clear stored token and navigate to login
+            try {
+                sessionStorage.removeItem('myToken');
+            } catch (e) {
+                // ignore
+            }
+
+            if (typeof window !== 'undefined') {
+                window.location.href = '/login';
+            } else {
+                console.error('Unauthorized — cannot redirect (no window).');
+            }
         }
         return Promise.reject(error);
     }

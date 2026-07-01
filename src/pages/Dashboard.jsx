@@ -3,12 +3,12 @@ import { useState } from "react";
 import ProductTable from "../components/ProductTable.jsx";
 import Card from "../components/Card.jsx";
 import { RiShoppingCart2Fill } from "react-icons/ri";
+import { Link } from "react-router";
 
 function Dashboard() {
 
   return (
     <>
-
       <div className="mb-8">
         <h1 className="text-3xl gap-4 h-[66] w-[380] font-bold text-slate-900">
           System Overview
@@ -39,6 +39,8 @@ function Dashboard() {
       </div>
 
       <p>Hello</p>
+
+      <Link to="/login">Logout</Link>
 
       <ProductTable />
 

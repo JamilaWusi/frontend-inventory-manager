@@ -1,32 +1,46 @@
 import { Route, Routes } from "react-router";
 import Dashboard from "./Dashboard";
-import createAccount from "./create account";
-import suppliers from "./supppliers";
-import NotFound from "./";
+import Suppliers from "./Suppliers";
+import Signup from "./Signup";
+import Products from "./Products";
+import Inventory from "./Inventory";
+import Container from "../components/Container";
+import Login from "./Login";
 
 export default function Navigation() {
     return (
         <Routes>
+            <Route element={<Container />}>
+                <Route
+                    index
+                    element={<Dashboard />}
+                />
+                <Route
+                    path="/products"
+                    element={<Products />}
+                />
+                <Route
+                    path="/suppliers"
+                    element={<Suppliers />}
+                />
+
+                <Route
+                    path="/inventory"
+                    element={<Inventory />}
+                />
+
+                <Route
+                    path="/*"
+                    // element={<NotFound />}
+                />
+            </Route>
             <Route
-                index
+                path="/login"
                 element={<Login />}
             />
             <Route
-                path="/suppliers"
-                element={<suppliers />}
-            />
-
-            <Route
-                path="/dashboard"
-                element={<Dashboard />}
-            />
-            <Route
-                path="/dashboard"
-                element={<Dashboard />}
-            />
-            <Route
-                path="/*"
-                element={<NotFound />}
+                path="/signup"
+                element={<Signup />}
             />
         </Routes>
     )

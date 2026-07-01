@@ -6,7 +6,7 @@ import { RiLockPasswordLine } from "react-icons/ri"
 import { FaArrowRight } from "react-icons/fa";
 import Button from "../components/Button";
 
-export default function LoginPage() {
+export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="w-md space-y-6">

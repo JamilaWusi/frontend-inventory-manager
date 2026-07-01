@@ -1,28 +1,71 @@
-import DashboardCard from "../components/DashboardCard";
-import PageHeader from "../components/PageHeader";
-import SearchBar from "../components/SearchBar";
+import { useState } from "react";
+import Button from "../components/Button";
+import Input from "../components/Input"
 import ProductTable from "../components/ProductTable";
+import Modal from "../components/Modal";
 
 function Products() {
+
+  const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false)
+  const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false)
+
+  function openAddProductModal() {
+    setIsAddProductModalOpen(true)
+  }
+
+  function openEditProductModal() {
+    setIsEditProductModalOpen(true)
+  }
+
+  function closeModal() {
+    setIsAddProductModalOpen(false)
+    setIsEditProductModalOpen(false)
+  }
+
   return (
-    <div className="p-6">
-      <PageHeader
-        title="Products"
-        subtitle="Manage your products and inventory."
-        buttonText="Add Product"
-      />
-
-      <div className="grid grid-cols-4 gap-6 my-6">
-        <DashboardCard />
-        <DashboardCard />
-        <DashboardCard />
-        <DashboardCard />
-      </div>
-
-      <SearchBar />
-
+    <>
+      Products
+      <Button onClick={openAddProductModal}>Add New Product</Button>
+      <Button onClick={openEditProductModal}>Edit Product</Button>
       <ProductTable />
-    </div>
+
+      {/* Add Product Modal */}
+      <Modal
+        isOpen={isAddProductModalOpen}
+        onClose={closeModal}
+      >
+        <h1>Add Product</h1>
+        <form>
+          <Input
+            id={"productName"}
+            placeholder={"Enter Product Name"}
+            label={"Product Name"}
+
+          />
+          <Input
+            id={"quantity"}
+            placeholder={"Enter Quantity"}
+            label={"Quantity"}
+          />
+          <Input id={"unitPrice"} />
+          <Input id={"unit"} />
+          <Input id={"reorderLevel"} />
+          <Button>
+            Add Product
+          </Button>
+        </form>
+      </Modal>
+
+      {/* Edit Product Modal */}
+      <Modal
+        isOpen={isEditProductModalOpen}
+        onClose={closeModal}
+      >
+        <h1>Edit Product</h1>
+      </Modal>
+    </>
+
+
   );
 }
 

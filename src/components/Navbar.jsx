@@ -1,32 +1,52 @@
 import { FiSearch, FiBell, FiUser } from "react-icons/fi";
+import { NavLink } from "react-router";
 
 function Navbar() {
+
+  const navLinks = [
+    {
+      to: "/",
+      label: "Dashboard"
+    },
+    {
+      to: "/products",
+      label: "Products"
+    },
+    {
+      to: "/suppliers",
+      label: "Suppliers"
+    },
+    {
+      to: "/inventory",
+      label: "Inventory"
+    }
+  ]
+
   return (
     <nav className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-6">
 
       {/* Left Section */}
       <div className="flex items-center gap-10">
         <h1 className="text-2xl font-bold text-green-600">
-          StockFlow Pro
+          Stock Track
         </h1>
 
         {/* Navigation Links */}
         <div className="flex items-center gap-6">
-          <button className="font-semibold text-slate-900">
-            Dashboard
-          </button>
+          {
+            navLinks.map(nav => {
+              return (
+                <NavLink to={nav.to}
+                  className={({ isActive }) =>
+                    isActive ? "text-amber-300" : ``
+                  }
+                >
+                 {nav.label}
+                </NavLink>
+              )
+            })
+          }
 
-          <button className="text-slate-600 font-semibold hover:text-slate-900">
-            Inventory
-          </button>
-
-          <button className="text-slate-600 font-semibold hover:text-slate-900">
-            Reports
-          </button>
-
-          <button className="text-slate-600 font-semibold hover:text-slate-900">
-            Settings
-          </button>
         </div>
       </div>
 

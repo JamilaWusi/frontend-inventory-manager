@@ -1,8 +1,5 @@
 import axios from 'axios';
 
-
-
-// Local
 const baseURL = 'https://shop-inventory-manager-2t9a.onrender.com'
 
 const client = axios.create({

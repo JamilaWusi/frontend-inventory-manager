@@ -8,7 +8,7 @@ function profileReducer(oldprofile, action) {
         case "set":
             {
                 return {
-                    ...oldprofile, profile: action.payload
+                    ...oldprofile, ...action.payload
                 }
             }
         case "clear": {

@@ -1,9 +1,11 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { MdOutlineInventory2, MdOutlineAttachMoney, MdOutlineCategory, MdOutlineLowPriority, MdOutlineNumbers } from "react-icons/md";
 import Button from "../components/Button";
 import Input from "../components/Input";
 import Modal from "../components/Modal";
 import { addInventoryProduct, getInventoryData, updateInventoryProduct } from "../utils/inventoryStorage";
+import { TokenContext } from "../context/TokenContext";
+import { addProduct, getProducts } from "../utils/fn";
 
 const emptyProductForm = {
   productName: "",
@@ -15,69 +17,77 @@ const emptyProductForm = {
 };
 
 function Products() {
+
+  const tokenPayload = useContext(TokenContext)
+
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
+
+  const [addProductData, setAddProductData] = useState({
+    productName: "",
+    quantity: "",
+    unitPrice: "",
+    unit: "",
+    reorderLevel: "",
+    supplier: ""
+  })
+
   const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
+
+  const [isLoading, setIsLoading] = useState(false)
+
+
   const [formData, setFormData] = useState(emptyProductForm);
+
   const [products, setProducts] = useState([]);
 
-  useEffect(() => {
-    const inventoryData = getInventoryData();
-    setProducts(inventoryData.products);
-  }, []);
+  async function handleAddProduct(e) {
+    e.preventDefault();
+    try {
+      setIsLoading(true)
+      const res = await addProduct(tokenPayload.token, addProductData)
+    } catch (error) {
+
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   function openAddProductModal() {
-    setEditingProduct(null);
-    setFormData(emptyProductForm);
     setIsAddProductModalOpen(true);
   }
 
   function openEditProductModal(product) {
-    setEditingProduct(product);
-    setFormData({
-      productName: product.name || product.productName || "",
-      quantity: product.currentStock ?? "",
-      unitPrice: product.unitPrice ?? "",
-      unit: product.unit || "",
-      reorderLevel: product.reorderLevel ?? "",
-      category: product.category || "General",
-    });
+
     setIsEditProductModalOpen(true);
   }
 
   function closeModal() {
     setIsAddProductModalOpen(false);
     setIsEditProductModalOpen(false);
-    setEditingProduct(null);
-    setFormData(emptyProductForm);
   }
 
-  function handleSaveProduct(event) {
-    event.preventDefault();
+  useEffect(() => {
+    async function call() {
+      try {
+        const data = await getProducts(tokenPayload.token)
+        console.log(data)
+        if (data.success) {
+          setProducts(data.data)
+        }
+      } catch (error) {
+        console.log(error)
+      }
+    }
 
-    const product = {
-      id: editingProduct?.id ?? Date.now(),
-      name: formData.productName.trim(),
-      productName: formData.productName.trim(),
-      currentStock: Number(formData.quantity || 0),
-      category: formData.category || "General",
-      unitPrice: Number(formData.unitPrice || 0),
-      unit: formData.unit.trim() || "pcs",
-      reorderLevel: Number(formData.reorderLevel || 0),
-      supplier: editingProduct?.supplier || "",
-    };
+    call()
 
-    const nextData = editingProduct
-      ? updateInventoryProduct(product)
-      : addInventoryProduct(product);
+  }, []);
 
-    setProducts(nextData.products);
-    closeModal();
-  }
 
   return (
     <div className="space-y-6">
-      <div className="mb-0 flex flex-col gap-4 rounded-[28px] border border-slate-200 bg-white p-6 shadow-xl sm:flex-row sm:items-center sm:justify-between">
+      <div className="mb-5 flex flex-col gap-4 rounded-[28px] border border-slate-200 bg-white p-6 shadow-xl sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold text-slate-900">Products</h1>
           <p className="mt-1 text-sm leading-6 text-slate-600">Manage your inventory catalog and stock levels with a clean and modern interface.</p>
@@ -103,7 +113,7 @@ function Products() {
               </tr>
             </thead>
             <tbody>
-              {products.map((product) => (
+              {products.length > 0 ? products.map((product) => (
                 <tr key={product.id} className="border-t border-slate-200 hover:bg-slate-50">
                   <td className="px-5 py-4 font-semibold text-slate-900">{product.name || product.productName}</td>
                   <td className="px-5 py-4 text-slate-600">{product.category}</td>
@@ -118,7 +128,10 @@ function Products() {
                     </button>
                   </td>
                 </tr>
-              ))}
+              )) : <tr>
+                <td colSpan={4} className="text-center py-5">
+                  No product added yet
+                </td></tr>}
             </tbody>
           </table>
         </div>
@@ -130,14 +143,14 @@ function Products() {
             <h2 className="text-xl font-semibold text-[#191C1E]">Add Product</h2>
             <p className="text-sm text-[#45474C]">Fill in the details below to create a new product entry.</p>
           </div>
-          <form className="space-y-4" onSubmit={handleSaveProduct}>
+          <form className="space-y-4" onSubmit={handleAddProduct}>
             <Input
               className="w-full"
               id="productName"
               placeholder="Enter Product Name"
               label="Product Name"
-              value={formData.productName}
-              onChange={(event) => setFormData({ ...formData, productName: event.target.value })}
+              value={addProductData.productName}
+              onChange={(event) => setAddProductData({ ...addProductData, productName: event.target.value })}
               icon={<MdOutlineInventory2 size={20} color="#75777D" />}
             />
             <Input
@@ -146,8 +159,8 @@ function Products() {
               placeholder="Enter Quantity"
               label="Quantity"
               type="number"
-              value={formData.quantity}
-              onChange={(event) => setFormData({ ...formData, quantity: event.target.value })}
+              value={addProductData.quantity}
+              onChange={(event) => setAddProductData({ ...addProductData, quantity: event.target.value })}
               icon={<MdOutlineNumbers size={20} color="#75777D" />}
             />
             <Input
@@ -156,8 +169,8 @@ function Products() {
               placeholder="Enter Unit Price"
               label="Unit Price"
               type="number"
-              value={formData.unitPrice}
-              onChange={(event) => setFormData({ ...formData, unitPrice: event.target.value })}
+              value={addProductData.unitPrice}
+              onChange={(event) => setAddProductData({ ...addProductData, unitPrice: event.target.value })}
               icon={<MdOutlineAttachMoney size={20} color="#75777D" />}
             />
             <Input
@@ -165,8 +178,8 @@ function Products() {
               id="unit"
               placeholder="Enter Unit"
               label="Unit"
-              value={formData.unit}
-              onChange={(event) => setFormData({ ...formData, unit: event.target.value })}
+              value={addProductData.unit}
+              onChange={(event) => setAddProductData({ ...addProductData, unit: event.target.value })}
               icon={<MdOutlineCategory size={20} color="#75777D" />}
             />
             <Input
@@ -175,8 +188,8 @@ function Products() {
               placeholder="Enter Reorder Level"
               label="Reorder Level"
               type="number"
-              value={formData.reorderLevel}
-              onChange={(event) => setFormData({ ...formData, reorderLevel: event.target.value })}
+              value={addProductData.reorderLevel}
+              onChange={(event) => setAddProductData({ ...addProductData, reorderLevel: event.target.value })}
               icon={<MdOutlineLowPriority size={20} color="#75777D" />}
             />
             <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">

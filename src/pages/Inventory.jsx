@@ -39,33 +39,33 @@ export default function Inventory() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-4">
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-            <div className="mb-2 flex items-center gap-2 text-slate-900">
+          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 p-4">
+            <div className="mb-2 flex items-center gap-2 text-slate-100">
               <FiPackage size={18} />
               <span className="text-sm font-semibold">Products</span>
             </div>
-            <p className="text-2xl font-semibold text-slate-900">{products.length}</p>
+            <p className="text-2xl font-semibold text-slate-100">{products.length}</p>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-            <div className="mb-2 flex items-center gap-2 text-slate-900">
+          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 p-4">
+            <div className="mb-2 flex items-center gap-2 text-slate-100">
               <FiRefreshCw size={18} />
               <span className="text-sm font-semibold">Total Stock</span>
             </div>
-            <p className="text-2xl font-semibold text-slate-900">{totalStock}</p>
+            <p className="text-2xl font-semibold text-slate-100">{totalStock}</p>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-            <div className="mb-2 flex items-center gap-2 text-slate-900">
+          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 p-4">
+            <div className="mb-2 flex items-center gap-2 text-slate-100">
               <FiAlertTriangle size={18} />
               <span className="text-sm font-semibold">Critical Alerts</span>
             </div>
-            <p className="text-2xl font-semibold text-slate-900">{criticalProducts.length}</p>
+            <p className="text-2xl font-semibold text-slate-100">{criticalProducts.length}</p>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-            <div className="mb-2 flex items-center gap-2 text-slate-900">
+          <div className="rounded-3xl border border-slate-200 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-700 p-4">
+            <div className="mb-2 flex items-center gap-2 text-slate-100">
               <FiPackage size={18} />
               <span className="text-sm font-semibold">Suppliers</span>
             </div>
-            <p className="text-2xl font-semibold text-slate-900">{suppliers.length}</p>
+            <p className="text-2xl font-semibold text-slate-100">{suppliers.length}</p>
           </div>
         </div>
       </div>

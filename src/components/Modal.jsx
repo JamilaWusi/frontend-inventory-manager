@@ -27,9 +27,9 @@ export default function Modal({
     <dialog
       ref={dialogRef}
       onClose={handleClose}
-      className="m-auto max-w-[95vw] rounded-[32px] border border-slate-200 bg-white p-0 shadow-2xl shadow-slate-950/10 backdrop:bg-slate-900/40 backdrop:backdrop-blur-sm"
+      className="m-auto w-[90%] sm:w-1/2 rounded-[32px] border border-slate-200 bg-white p-5 sm:p-10 shadow-2xl shadow-slate-950/10 backdrop:bg-slate-900/40 backdrop:backdrop-blur-sm"
     >
-      <div className="relative overflow-hidden rounded-[32px] bg-white p-0">
+      <div className="relative overflow-hidden bg-white p-0">
         {children}
         {closeButton && (
           <button

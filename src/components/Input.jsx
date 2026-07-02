@@ -9,6 +9,7 @@ export default function Input({
     placeholder,
     type = "text",
     value,
+    required = true,
     onChange,
     isPasswordType = false,
     className = "",
@@ -42,6 +43,7 @@ export default function Input({
                     placeholder={placeholder}
                     readOnly={readOnly}
                     disabled={disabled}
+                    required={required}
                     className={`flex-1 bg-transparent text-sm text-slate-900 outline-none placeholder:text-slate-400 ${inputClassName}`}
                 />
 

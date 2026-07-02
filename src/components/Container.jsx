@@ -6,7 +6,7 @@ export default function Container({ children }) {
     return (
         <div className="min-h-screen">
             <Navbar />
-            <main>
+            <main className="py-5 px-5 md:px-10 mx-auto max-w-[1440px]">
                 <Outlet />
             </main>
 

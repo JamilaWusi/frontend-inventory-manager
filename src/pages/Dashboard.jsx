@@ -1,16 +1,20 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import ProductTable from "../components/ProductTable.jsx";
 import Card from "../components/Card.jsx";
 import { RiShoppingCart2Fill } from "react-icons/ri";
 import { Link } from "react-router";
+import { ProfileContext } from "../context/ProfileContext.jsx";
 
 function Dashboard() {
+
+  const profile = useContext(ProfileContext)
+  console.log(profile)
 
   return (
     <div className="space-y-8">
       <div>
-        <h1 className="text-4xl font-bold tracking-tight text-slate-900">Welcome to StockTrcak</h1>
+        <h1 className="text-4xl font-bold tracking-tight text-slate-900">Welcome, <span>{`${profile.firstName} ${profile.lastName}`}</span>, to StockTrack</h1>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
           Real-time inventory monitoring and quick access to product, supplier, and stock transaction summaries.
         </p>

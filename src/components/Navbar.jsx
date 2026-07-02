@@ -28,7 +28,7 @@ function Navbar() {
 
   return (
     <nav className="border-b border-slate-200 bg-white/95 px-4 py-3 shadow-sm backdrop-blur sm:px-6">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-4">
+      <div className="mx-auto flex max-w-[1440px] items-center justify-between gap-4">
         <div className="flex items-center gap-6">
           <h1 className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl">
             Stock <span className="text-amber-500">Track</span>

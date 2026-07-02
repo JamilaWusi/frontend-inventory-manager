@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import StockTransactions from "./StockTransactions.jsx";
 
 function UsersManager({ users = [], currentUser }) {
   return (

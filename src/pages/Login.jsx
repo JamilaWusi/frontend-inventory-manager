@@ -11,6 +11,7 @@ import Loader from "../components/Loader";
 import { Link } from "react-router";
 import { TokenDispatchContext } from "../context/TokenContext";
 
+
 export default function Login() {
 
   const tokenDispatch = useContext(TokenDispatchContext)
@@ -23,6 +24,8 @@ export default function Login() {
 
   async function handleLogin(e) {
     e.preventDefault()
+    setIsLoading(true)
+    const response = await login(loginData)
     try {
       setIsLoading(true)
       const response = await login(loginData)
@@ -32,6 +35,7 @@ export default function Login() {
           type: "loggedIn",
           payload: response.token
         })
+        sessionStorage.setItem("token", response.token)
       }
     } catch (error) {
       console.log(error)

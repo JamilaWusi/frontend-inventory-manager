@@ -88,6 +88,10 @@ function normalizeInventoryData(data) {
   };
 }
 
+function getStockValue(product) {
+  return Number(product.currentStock ?? product.quantity ?? product.currentStockQuantity ?? 0);
+}
+
 export function getInventoryData() {
   if (typeof window === "undefined") {
     return normalizeInventoryData(defaultInventoryData);
@@ -198,6 +202,29 @@ export function deleteInventorySupplier(supplierId) {
   return nextData;
 }
 
+export function getWeeklyInventoryReport(data = getInventoryData()) {
+  const now = new Date();
+  const weekAgo = new Date(now);
+  weekAgo.setDate(now.getDate() - 7);
+
+  const weeklyTransactions = (data.transactions || []).filter((transaction) => {
+    const transactionDate = new Date(transaction.date);
+    return !Number.isNaN(transactionDate.getTime()) && transactionDate >= weekAgo;
+  });
+
+  const restocks = weeklyTransactions.filter((transaction) => transaction.type === "Restock");
+  const issues = weeklyTransactions.filter((transaction) => transaction.type === "Issue");
+  const adjustments = weeklyTransactions.filter((transaction) => transaction.type === "Adjustment");
+
+  return {
+    movementCount: weeklyTransactions.length,
+    restockCount: restocks.reduce((sum, transaction) => sum + Number(transaction.quantity || 0), 0),
+    issueCount: issues.reduce((sum, transaction) => sum + Number(transaction.quantity || 0), 0),
+    adjustmentCount: adjustments.reduce((sum, transaction) => sum + Number(transaction.quantity || 0), 0),
+    lowStockProducts: (data.products || []).filter((product) => getStockValue(product) <= Number(product.reorderLevel || 5)),
+  };
+}
+
 export function recordInventoryTransaction({ productId, type, quantity, note, performedBy }) {
   const currentData = getInventoryData();
   const selectedProduct = currentData.products.find((product) => product.id === Number(productId));
@@ -207,7 +234,12 @@ export function recordInventoryTransaction({ productId, type, quantity, note, pe
   }
 
   const qty = Number(quantity);
-  const nextStock = type === "Issue" ? Math.max(0, selectedProduct.currentStock - qty) : selectedProduct.currentStock + qty;
+  const nextStock =
+    type === "Issue"
+      ? Math.max(0, selectedProduct.currentStock - qty)
+      : type === "Adjustment"
+        ? qty
+        : selectedProduct.currentStock + qty;
 
   const updatedProducts = currentData.products.map((product) =>
     product.id === selectedProduct.id ? { ...product, currentStock: nextStock } : product

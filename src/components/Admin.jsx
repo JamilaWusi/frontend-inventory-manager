@@ -1,4 +1,6 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { ProfileContext } from "../context/ProfileContext";
+import { TokenDispatchContext } from "../context/TokenContext";
 
 function UsersManager({ users = [], currentUser }) {
   return (
@@ -105,7 +107,17 @@ export default function AdminPanel({
     businessName: "",
   });
 
+  const profilePayload = useContext(ProfileContext);
+  const tokenDispatch = useContext(TokenDispatchContext)
+
   const isAdminView = currentUser?.role === "Admin" || currentUser?.role === "Owner";
+
+  function logOut() {
+    tokenDispatch({
+      type: "loggedOut"
+    })
+  }
+
 
   useEffect(() => {
     if (currentUser) {
@@ -144,7 +156,7 @@ export default function AdminPanel({
               {isAdminView ? "Admin Dashboard" : "User Dashboard"}
             </h1>
             <p className="text-sm text-slate-600">
-              Signed in as {currentUser?.firstName} {currentUser?.lastName} ({currentUser?.role})
+              Signed in as {profilePayload?.firstName} {profilePayload?.lastName} ({profilePayload?.role})
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -155,7 +167,7 @@ export default function AdminPanel({
               Back to Landing
             </button> */}
             <button
-              onClick={onLogout}
+              onClick={logOut}
               className="rounded bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700"
             >
               Log Out
@@ -213,23 +225,23 @@ export default function AdminPanel({
                 <div className="space-y-3 text-sm text-slate-700">
                   <div className="flex flex-col gap-1 border-b border-slate-200 pb-2 sm:flex-row sm:justify-between">
                     <span className="font-medium text-slate-500">Name</span>
-                    <span>{currentUser?.firstName} {currentUser?.lastName}</span>
+                    <span>{profilePayload?.firstName} {profilePayload?.lastName}</span>
                   </div>
                   <div className="flex flex-col gap-1 border-b border-slate-200 pb-2 sm:flex-row sm:justify-between">
                     <span className="font-medium text-slate-500">Email</span>
-                    <span className="break-all">{currentUser?.email}</span>
+                    <span className="break-all">{profilePayload?.email}</span>
                   </div>
                   <div className="flex flex-col gap-1 border-b border-slate-200 pb-2 sm:flex-row sm:justify-between">
                     <span className="font-medium text-slate-500">Role</span>
-                    <span>{currentUser?.role}</span>
+                    <span>{profilePayload?.role}</span>
                   </div>
                   <div className="flex flex-col gap-1 border-b border-slate-200 pb-2 sm:flex-row sm:justify-between">
                     <span className="font-medium text-slate-500">Business</span>
-                    <span>{currentUser?.businessName || "N/A"}</span>
+                    <span>{profilePayload?.businessName || "N/A"}</span>
                   </div>
                   <div className="flex flex-col gap-1 sm:flex-row sm:justify-between">
                     <span className="font-medium text-slate-500">Phone</span>
-                    <span>{currentUser?.phoneNumber || "N/A"}</span>
+                    <span>{profilePayload?.phoneNumber || "N/A"}</span>
                   </div>
                 </div>
               </div>

@@ -17,7 +17,7 @@ function Signup() {
     phoneNumber: "",
     password: "",
   })
-  const [isLoading, setIsLoading] = useState(false)
+ const [isLoading, setIsLoading] = useState(false)
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -26,7 +26,8 @@ function Signup() {
       const res = await register(registerData)
       console.log(res)
       if (res) {
-        console.log(res)
+        // registration succeeded — redirect to login page
+        window.location.href = "/login";
       }
     } catch (error) {
       console.log(error)

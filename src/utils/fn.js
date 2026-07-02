@@ -1,26 +1,26 @@
 
 const baseURL = 'https://shop-inventory-manager-1.onrender.com'
 
-// const baseURL = 'http://localhost:8080'
+const baseURL = 'http://localhost:8080'
 
 export async function register(data) {
-   try {
-      const res = await fetch(`${baseURL}/api/auth/register`, {
-         method: "POST",
-         body: JSON.stringify(data),
-         headers: {
-            "Content-type": "Application/json"
-         }
-      });
-      if (!res.ok) {
-         throw new Error();
-      }
-      const response = await res.json();
-      console.log(response);
-      return response
-   } catch (error) {
-      console.log(error);
-   }
+  const res = await fetch(`${baseURL}/api/auth/register`, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    },
+  });
+
+  const response = await res.json(); // Parse the response first
+
+  if (!res.ok) {
+    console.log(response); // Log the backend error
+    throw new Error(response.message || "Registration failed");
+  }
+
+  return response;
 }
 
 export async function login(data) {
@@ -29,7 +29,8 @@ export async function login(data) {
          method: "POST",
          body: JSON.stringify(data),
          headers: {
-            "Content-type": "Application/json"
+            "Content-Type": "application/json",
+            "Accept": "application/json"
          }
       }
       )
@@ -39,7 +40,7 @@ export async function login(data) {
       const response = await res.json();
       return response
    } catch (error) {
-      console.log(error)
+      throw error
    }
 }
 
@@ -251,4 +252,26 @@ export async function deleteSupplier(token, supplierId) {
    } catch (error) {
       console.log(error);
    }
+}
+
+export async function getTransactions(token) {
+    try {
+        const res = await fetch(`${baseURL}/api/stock`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const response = await res.json();
+
+        if (!res.ok) {
+            throw new Error(response.message);
+        }
+
+        return response.data;
+    } catch (error) {
+        console.error(error);
+        throw error;
+    }
 }

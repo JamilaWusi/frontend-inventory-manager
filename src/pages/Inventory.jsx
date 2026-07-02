@@ -1,53 +1,37 @@
-import { useContext, useEffect, useMemo, useState } from "react";
-import { FiAlertTriangle, FiPackage, FiRefreshCw } from "react-icons/fi";
-import { TokenContext } from "../context/TokenContext";
-import { getProducts, getSuppliers } from "../utils/fn";
-import PageLoader from "./PageLoader";
+import { useEffect, useMemo, useState } from "react";
+import { FiAlertTriangle, FiPackage, FiRefreshCw, FiTrendingUp } from "react-icons/fi";
+import {
+  getInventoryData,
+  getWeeklyInventoryReport,
+  recordInventoryTransaction,
+} from "../utils/inventoryStorage";
 
 function getStockValue(product) {
   return Number(product.currentStock ?? product.quantity ?? 0);
 }
 
 export default function Inventory() {
-  const tokenPayload = useContext(TokenContext);
-  const [products, setProducts] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [inventoryData, setInventoryData] = useState(() => getInventoryData());
+  const [form, setForm] = useState(() => {
+    const initialData = getInventoryData();
+    return {
+      productId: String(initialData.products?.[0]?.id || ""),
+      type: "Restock",
+      quantity: "",
+      note: "",
+      performedBy: "",
+    };
+  });
 
-  async function loadInventory() {
-    if (!tokenPayload?.token) {
-      setProducts([]);
-      setSuppliers([]);
-      setError("");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      setError("");
-
-      const [productsResponse, suppliersResponse] = await Promise.all([
-        getProducts(tokenPayload.token),
-        getSuppliers(tokenPayload.token),
-      ]);
-
-      const loadedProducts = Array.isArray(productsResponse?.data) ? productsResponse.data : [];
-      const loadedSuppliers = Array.isArray(suppliersResponse?.data) ? suppliersResponse.data : [];
-
-      setProducts(loadedProducts);
-      setSuppliers(loadedSuppliers);
-    } catch (err) {
-      console.error(err);
-      setError("Unable to load inventory data right now.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
+  const products = inventoryData.products || [];
+  const suppliers = inventoryData.suppliers || [];
+  const transactions = inventoryData.transactions || [];
 
   useEffect(() => {
-    loadInventory();
-  }, [tokenPayload?.token]);
+    if (!products.some((product) => String(product.id) === form.productId)) {
+      setForm((currentForm) => ({ ...currentForm, productId: String(products[0]?.id || "") }));
+    }
+  }, [products, form.productId]);
 
   const totalStock = useMemo(
     () => products.reduce((sum, product) => sum + getStockValue(product), 0),
@@ -57,6 +41,7 @@ export default function Inventory() {
     () => products.filter((product) => getStockValue(product) <= Number(product.reorderLevel || 5)),
     [products]
   );
+  const weeklyReport = useMemo(() => getWeeklyInventoryReport(inventoryData), [inventoryData]);
   const recentUpdates = useMemo(
     () =>
       products.slice(0, 5).map((product) => ({
@@ -69,11 +54,30 @@ export default function Inventory() {
   );
 
   function refreshInventory() {
-    loadInventory();
+    setInventoryData(getInventoryData());
   }
 
-  if (isLoading) {
-    return <PageLoader />;
+  function handleStockSubmit(event) {
+    event.preventDefault();
+
+    const selectedProduct = products.find((product) => String(product.id) === form.productId);
+    const quantity = Number(form.quantity);
+
+    if (!selectedProduct || !form.type || !quantity || !form.performedBy) {
+      alert("Please complete all stock movement fields.");
+      return;
+    }
+
+    const nextData = recordInventoryTransaction({
+      productId: selectedProduct.id,
+      type: form.type,
+      quantity,
+      note: form.note,
+      performedBy: form.performedBy,
+    });
+
+    setInventoryData(nextData);
+    setForm({ productId: String(selectedProduct.id), type: "Restock", quantity: "", note: "", performedBy: "" });
   }
 
   return (
@@ -83,7 +87,7 @@ export default function Inventory() {
           <div>
             <h1 className="text-3xl font-bold text-slate-900">Inventory Overview</h1>
             <p className="mt-1 text-sm leading-6 text-slate-600">
-              Live stock levels, supplier links, alerts, and recent activity from your connected backend data.
+              Stock is updated instantly from each movement, low-stock items are surfaced here, and a weekly summary stays visible.
             </p>
           </div>
           <button
@@ -94,12 +98,6 @@ export default function Inventory() {
             Refresh
           </button>
         </div>
-
-        {error ? (
-          <div className="mb-4 rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-            {error}
-          </div>
-        ) : null}
 
         <div className="grid gap-4 md:grid-cols-4">
           <div className="rounded-3xl border border-slate-200 bg-linear-to-br from-slate-900 via-slate-800 to-slate-700 p-4">
@@ -138,7 +136,7 @@ export default function Inventory() {
           <div className="mb-4 flex items-center justify-between">
             <div>
               <h2 className="text-lg font-semibold text-slate-900">Inventory Status</h2>
-              <p className="text-sm text-slate-600">Current stock and alert state for products from the backend.</p>
+              <p className="text-sm text-slate-600">Current stock and alert state for your live inventory.</p>
             </div>
           </div>
 
@@ -186,6 +184,75 @@ export default function Inventory() {
 
         <div className="space-y-6">
           <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-xl">
+            <h2 className="mb-4 text-lg font-semibold text-slate-900">Record Stock Movement</h2>
+            <form onSubmit={handleStockSubmit} className="space-y-4">
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-600">Product</label>
+                <select
+                  value={form.productId}
+                  onChange={(event) => setForm({ ...form, productId: event.target.value })}
+                  className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-slate-300 focus:ring-2 focus:ring-slate-200"
+                >
+                  {products.map((product) => (
+                    <option key={product.id} value={String(product.id)}>
+                      {product.name || product.productName}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-600">Movement Type</label>
+                <select
+                  value={form.type}
+                  onChange={(event) => setForm({ ...form, type: event.target.value })}
+                  className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-slate-300 focus:ring-2 focus:ring-slate-200"
+                >
+                  <option value="Restock">Restock</option>
+                  <option value="Issue">Issue</option>
+                  <option value="Adjustment">Adjustment</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-600">Quantity</label>
+                <input
+                  type="number"
+                  value={form.quantity}
+                  onChange={(event) => setForm({ ...form, quantity: event.target.value })}
+                  placeholder="Enter quantity"
+                  className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-slate-300 focus:ring-2 focus:ring-slate-200"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-600">Performed By</label>
+                <input
+                  type="text"
+                  value={form.performedBy}
+                  onChange={(event) => setForm({ ...form, performedBy: event.target.value })}
+                  placeholder="Manager or staff name"
+                  className="w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-slate-300 focus:ring-2 focus:ring-slate-200"
+                />
+              </div>
+
+              <div>
+                <label className="mb-1 block text-sm font-medium text-slate-600">Note</label>
+                <textarea
+                  value={form.note}
+                  onChange={(event) => setForm({ ...form, note: event.target.value })}
+                  placeholder="Add note for this movement"
+                  className="min-h-24 w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-900 focus:border-slate-300 focus:ring-2 focus:ring-slate-200"
+                />
+              </div>
+
+              <button type="submit" className="w-full rounded-3xl bg-slate-900 px-4 py-3 text-sm font-semibold text-white transition hover:bg-slate-800">
+                Save Movement
+              </button>
+            </form>
+          </div>
+
+          <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-xl">
             <h2 className="mb-3 text-lg font-semibold text-slate-900">Critical Stock Alerts</h2>
             {criticalProducts.length === 0 ? (
               <p className="text-sm text-[#45474C]">No critical stock items right now.</p>
@@ -200,6 +267,36 @@ export default function Inventory() {
                 ))}
               </ul>
             )}
+          </div>
+
+          <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-xl">
+            <div className="mb-3 flex items-center gap-2">
+              <FiTrendingUp size={16} className="text-slate-900" />
+              <h2 className="text-lg font-semibold text-slate-900">Weekly Report</h2>
+            </div>
+            <div className="grid gap-3 text-sm text-slate-700 sm:grid-cols-2">
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <div className="text-slate-500">Movements</div>
+                <div className="mt-1 text-lg font-semibold text-slate-900">{weeklyReport.movementCount}</div>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <div className="text-slate-500">Low-stock items</div>
+                <div className="mt-1 text-lg font-semibold text-slate-900">{weeklyReport.lowStockProducts.length}</div>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <div className="text-slate-500">Restocks</div>
+                <div className="mt-1 text-lg font-semibold text-slate-900">{weeklyReport.restockCount}</div>
+              </div>
+              <div className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                <div className="text-slate-500">Issues</div>
+                <div className="mt-1 text-lg font-semibold text-slate-900">{weeklyReport.issueCount}</div>
+              </div>
+            </div>
+            <p className="mt-3 text-sm text-slate-600">
+              {transactions.length > 0
+                ? `The latest ${transactions.slice(0, 3).length} stock movements are saved for the weekly report trail.`
+                : "Record your first movement to build a weekly report history."}
+            </p>
           </div>
 
           <div className="rounded-[28px] border border-slate-200 bg-white p-5 shadow-xl">

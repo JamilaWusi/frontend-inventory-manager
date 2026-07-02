@@ -1,12 +1,10 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 
 import ProductTable from "../components/ProductTable.jsx";
 import Card from "../components/Card.jsx";
 import { RiShoppingCart2Fill } from "react-icons/ri";
 import { ProfileContext } from "../context/ProfileContext.jsx";
-import { TokenContext } from "../context/TokenContext.jsx";
-import { deleteProduct, getProducts, getSuppliers } from "../utils/fn.js";
-import PageLoader from "./PageLoader";
+import { deleteInventoryProduct, getInventoryData, getWeeklyInventoryReport } from "../utils/inventoryStorage.js";
 
 function getStockValue(product) {
   return Number(product.currentStock ?? product.quantity ?? product.currentStockQuantity ?? 0);
@@ -14,71 +12,19 @@ function getStockValue(product) {
 
 function Dashboard() {
   const profile = useContext(ProfileContext);
-  const tokenPayload = useContext(TokenContext);
+  const [inventoryData, setInventoryData] = useState(() => getInventoryData());
 
-  const [products, setProducts] = useState([]);
-  const [suppliers, setSuppliers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
-
-  async function loadDashboardData() {
-    if (!tokenPayload?.token) {
-      setProducts([]);
-      setSuppliers([]);
-      setError("");
-      return;
-    }
-
-    try {
-      setIsLoading(true);
-      setError("");
-
-      const [productsResponse, suppliersResponse] = await Promise.all([
-        getProducts(tokenPayload.token),
-        getSuppliers(tokenPayload.token),
-      ]);
-
-      setProducts(Array.isArray(productsResponse?.data) ? productsResponse.data : []);
-      setSuppliers(Array.isArray(suppliersResponse?.data) ? suppliersResponse.data : []);
-    } catch (err) {
-      console.error(err);
-      setError("Unable to load dashboard data right now.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    loadDashboardData();
-  }, [tokenPayload?.token]);
-
+  const products = inventoryData.products || [];
+  const suppliers = inventoryData.suppliers || [];
   const criticalAlerts = useMemo(
     () => products.filter((product) => getStockValue(product) <= Number(product.reorderLevel || 5)),
     [products]
   );
+  const weeklyReport = useMemo(() => getWeeklyInventoryReport(inventoryData), [inventoryData]);
 
-  async function handleDeleteProduct(productId) {
-    if (!tokenPayload?.token) return;
-
-    try {
-      setIsLoading(true);
-      const response = await deleteProduct(tokenPayload.token, productId);
-
-      if (response) {
-        setProducts((currentProducts) =>
-          currentProducts.filter((product) => (product._id || product.id) !== productId)
-        );
-      }
-    } catch (err) {
-      console.error(err);
-      setError("Unable to delete this product right now.");
-    } finally {
-      setIsLoading(false);
-    }
-  }
-
-  if (isLoading) {
-    return <PageLoader />;
+  function handleDeleteProduct(productId) {
+    const nextData = deleteInventoryProduct(productId);
+    setInventoryData(nextData);
   }
 
   return (
@@ -91,12 +37,6 @@ function Dashboard() {
           Real-time inventory monitoring and quick access to product, supplier, and stock transaction summaries.
         </p>
       </div>
-
-      {error ? (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-700">
-          {error}
-        </div>
-      ) : null}
 
       <div className="grid gap-5 md:grid-cols-3">
         <Card
@@ -118,6 +58,55 @@ function Dashboard() {
           title="Critical Alerts"
           desc="Products needing restock"
         />
+      </div>
+
+      <div className="grid gap-5 xl:grid-cols-[1.05fr_0.95fr]">
+        <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_-24px_rgba(15,23,42,0.45)]">
+          <div className="mb-4 flex items-center justify-between">
+            <div>
+              <h2 className="text-lg font-semibold text-slate-900">Low Stock Products</h2>
+              <p className="text-sm text-slate-600">Items that need attention before they run out.</p>
+            </div>
+          </div>
+          {criticalAlerts.length === 0 ? (
+            <p className="text-sm text-slate-600">All products are being kept above the reorder level.</p>
+          ) : (
+            <ul className="space-y-3">
+              {criticalAlerts.map((product) => (
+                <li key={product._id || product.id} className="rounded-2xl border border-amber-200 bg-amber-50 p-3 text-sm text-slate-700">
+                  <div className="font-semibold text-slate-900">{product.name || product.productName}</div>
+                  <div>Current stock: {getStockValue(product)}</div>
+                  <div>Reorder level: {product.reorderLevel || 5}</div>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div className="rounded-[28px] border border-slate-200 bg-white p-6 shadow-[0_18px_45px_-24px_rgba(15,23,42,0.45)]">
+          <div className="mb-4">
+            <h2 className="text-lg font-semibold text-slate-900">Weekly Report Snapshot</h2>
+            <p className="text-sm text-slate-600">A quick view of the last seven days of inventory movement.</p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="text-sm text-slate-500">Movements</div>
+              <div className="mt-1 text-2xl font-semibold text-slate-900">{weeklyReport.movementCount}</div>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="text-sm text-slate-500">Low stock</div>
+              <div className="mt-1 text-2xl font-semibold text-slate-900">{weeklyReport.lowStockProducts.length}</div>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="text-sm text-slate-500">Restocks</div>
+              <div className="mt-1 text-2xl font-semibold text-slate-900">{weeklyReport.restockCount}</div>
+            </div>
+            <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div className="text-sm text-slate-500">Issues</div>
+              <div className="mt-1 text-2xl font-semibold text-slate-900">{weeklyReport.issueCount}</div>
+            </div>
+          </div>
+        </div>
       </div>
 
       <ProductTable products={products} onDelete={handleDeleteProduct} />

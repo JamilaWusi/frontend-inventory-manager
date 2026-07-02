@@ -17,7 +17,7 @@ import { SupplierDispatchContext } from "../context/SupplierContext";
 
 export default function Navigation() {
 
-    const tokenPayload = useContext(TokenContext)
+    const tokenPayload = JSON.parse(sessionStorage.getItem("token")) || useContext(TokenContext)
     const profileDispatch = useContext(profileDispatchContext)
     const suppliersDispatch = useContext(SupplierDispatchContext)
     const [isLoading, setIsLoading] = useState(false)

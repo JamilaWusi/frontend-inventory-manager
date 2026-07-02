@@ -27,11 +27,18 @@ function Dashboard() {
     );
   };
 
+  const deleteSupplier = (eid) => {
+    setSuppliers((prevSuppliers) =>
+      prevSuppliers.filter((Supplier) => Supplier.eid !== eid)
+    );
+  };
+
   return (
     <div>
       <ProductTable
         products={products}
         deleteProduct={deleteProduct}
+        deleteSupplier={deleteSupplier}
       />
     </div>
   );

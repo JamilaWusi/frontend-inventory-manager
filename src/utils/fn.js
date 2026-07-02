@@ -4,32 +4,32 @@ const baseURL = 'https://shop-inventory-manager-1.onrender.com'
 // const baseURL = 'http://localhost:8080'
 
 export async function register(data) {
-   try {
-      const res = await fetch(`${baseURL}/api/auth/register`, {
-         method: "POST",
-         body: JSON.stringify(data),
-         headers: {
-            "Content-type": "Application/json"
-         }
-      });
-      if (!res.ok) {
-         throw new Error();
-      }
-      const response = await res.json();
-      console.log(response);
-      return response
-   } catch (error) {
-      console.log(error);
-   }
-}
+  const res = await fetch(`${baseURL}/api/auth/register`, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json",
+      "Accept": "application/json",
+    },
+  });
 
+  const response = await res.json(); // Parse the response first
+
+  if (!res.ok) {
+    console.log(response); // Log the backend error
+    throw new Error(response.message || "Registration failed");
+  }
+
+  return response;
+}
 export async function login(data) {
    try {
       const res = await fetch(`${baseURL}/api/auth/login`, {
          method: "POST",
          body: JSON.stringify(data),
          headers: {
-            "Content-type": "Application/json"
+            "Content-Type": "application/json",
+            "Accept": "application/json"
          }
       }
       )
@@ -39,7 +39,7 @@ export async function login(data) {
       const response = await res.json();
       return response
    } catch (error) {
-      console.log(error)
+      throw error
    }
 }
 

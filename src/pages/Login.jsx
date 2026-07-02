@@ -10,6 +10,7 @@ import { login } from "../utils/fn";
 import Loader from "../components/Loader";
 import { Link } from "react-router";
 import { TokenDispatchContext } from "../context/TokenContext";
+import logo from "../assets/imagess(1).jpg"
 
 export default function Login() {
 

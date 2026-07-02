@@ -1,7 +1,7 @@
 
-// const baseURL = 'https://shop-inventory-manager-1.onrender.com'
+const baseURL = 'https://shop-inventory-manager-1.onrender.com'
 
-const baseURL = 'http://localhost:8080'
+// const baseURL = 'http://localhost:8080'
 
 export async function register(data) {
    try {

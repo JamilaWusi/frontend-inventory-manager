@@ -3,9 +3,11 @@ import { MdOutlineInventory2, MdOutlineAttachMoney, MdOutlineCategory, MdOutline
 import Button from "../components/Button";
 import Input from "../components/Input";
 import Modal from "../components/Modal";
-import { addInventoryProduct, getInventoryData, updateInventoryProduct } from "../utils/inventoryStorage";
+
 import { TokenContext } from "../context/TokenContext";
-import { addProduct, getProducts } from "../utils/fn";
+import { addProduct, getProducts, handleSaveProduct } from "../utils/fn";
+import PageLoader from "./PageLoader";
+import { SupplierContext } from "../context/SupplierContext";
 
 const emptyProductForm = {
   productName: "",
@@ -19,6 +21,9 @@ const emptyProductForm = {
 function Products() {
 
   const tokenPayload = useContext(TokenContext)
+  const supplierPayload = useContext(SupplierContext)
+
+  console.log(supplierPayload)
 
   const [isAddProductModalOpen, setIsAddProductModalOpen] = useState(false);
 
@@ -28,28 +33,94 @@ function Products() {
     unitPrice: "",
     unit: "",
     reorderLevel: "",
-    supplier: ""
+    supplier: "",
+    currentStockQuantity: "",
+
   })
 
   const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState(null);
 
   const [isLoading, setIsLoading] = useState(false)
-
+  const [feedback, setFeedback] = useState("")
 
   const [formData, setFormData] = useState(emptyProductForm);
 
   const [products, setProducts] = useState([]);
 
+  async function loadProducts() {
+    if (!tokenPayload?.token) {
+      setProducts([]);
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const data = await getProducts(tokenPayload.token);
+      if (data?.success !== false) {
+        setProducts(Array.isArray(data?.data) ? data.data : []);
+      }
+    } catch (error) {
+      console.error(error);
+      setFeedback("Could not load products from the server.");
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  function resetAddProductForm() {
+    setAddProductData({
+      productName: "",
+      quantity: "",
+      unitPrice: "",
+      unit: "",
+      reorderLevel: "",
+      supplier: "",
+    });
+  }
+
   async function handleAddProduct(e) {
     e.preventDefault();
-    try {
-      setIsLoading(true)
-      const res = await addProduct(tokenPayload.token, addProductData)
-    } catch (error) {
+    if (!tokenPayload?.token) {
+      setFeedback("Please sign in before adding a product.");
+      return;
+    }
 
+    if (!addProductData.productName?.trim()) {
+      setFeedback("Please enter a product name.");
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      setFeedback("");
+
+      const payload = {
+        name: addProductData.productName.trim(),
+        productName: addProductData.productName.trim(),
+        quantity: Number(addProductData.quantity || 0),
+        currentStock: Number(addProductData.quantity || 0),
+        unitPrice: Number(addProductData.unitPrice || 0),
+        unit: addProductData.unit.trim(),
+        reorderLevel: Number(addProductData.reorderLevel || 0),
+        category: addProductData.category || "General",
+        supplier: addProductData.supplier || "",
+      };
+
+      const res = await addProduct(tokenPayload.token, payload);
+      if (res?.success !== false) {
+        setProducts((prevProducts) => [res?.data ?? { ...payload, _id: Date.now().toString() }, ...prevProducts]);
+        closeModal();
+        resetAddProductForm();
+        await loadProducts();
+      } else {
+        setFeedback("The server rejected the product request.");
+      }
+    } catch (error) {
+      console.error(error);
+      setFeedback("Unable to add the product right now.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
   }
 
@@ -58,7 +129,17 @@ function Products() {
   }
 
   function openEditProductModal(product) {
-
+    setEditingProduct(product);
+    setFormData({
+      productName: product.name || product.productName || "",
+      quantity: product.currentStock ?? product.quantity ?? "",
+      unitPrice: product.unitPrice ?? "",
+      unit: product.unit || "",
+      reorderLevel: product.reorderLevel ?? "",
+      category: product.category || "General",
+      supplier: product.supplier || "",
+      currentStockQuantity: product.currentStock ?? product.quantity ?? "",
+    });
     setIsEditProductModalOpen(true);
   }
 
@@ -68,21 +149,12 @@ function Products() {
   }
 
   useEffect(() => {
-    async function call() {
-      try {
-        const data = await getProducts(tokenPayload.token)
-        console.log(data)
-        if (data.success) {
-          setProducts(data.data)
-        }
-      } catch (error) {
-        console.log(error)
-      }
-    }
+    loadProducts();
+  }, [tokenPayload?.token]);
 
-    call()
-
-  }, []);
+  if (isLoading) {
+    return <PageLoader />;
+  }
 
 
   return (
@@ -114,10 +186,10 @@ function Products() {
             </thead>
             <tbody>
               {products.length > 0 ? products.map((product) => (
-                <tr key={product.id} className="border-t border-slate-200 hover:bg-slate-50">
+                <tr key={product._id || product.id} className="border-t border-slate-200 hover:bg-slate-50">
                   <td className="px-5 py-4 font-semibold text-slate-900">{product.name || product.productName}</td>
-                  <td className="px-5 py-4 text-slate-600">{product.category}</td>
-                  <td className="px-5 py-4 text-slate-600">{product.currentStock}</td>
+                  <td className="px-5 py-4 text-slate-600">{product.category || "General"}</td>
+                  <td className="px-5 py-4 text-slate-600">{product.currentStock ?? product.quantity ?? 0}</td>
                   <td className="px-5 py-4">
                     <button
                       type="button"
@@ -144,6 +216,7 @@ function Products() {
             <p className="text-sm text-[#45474C]">Fill in the details below to create a new product entry.</p>
           </div>
           <form className="space-y-4" onSubmit={handleAddProduct}>
+            {feedback ? <div className="rounded-lg border border-rose-200 bg-rose-50 px-3 py-2 text-sm text-rose-700">{feedback}</div> : null}
             <Input
               className="w-full"
               id="productName"
@@ -192,11 +265,18 @@ function Products() {
               onChange={(event) => setAddProductData({ ...addProductData, reorderLevel: event.target.value })}
               icon={<MdOutlineLowPriority size={20} color="#75777D" />}
             />
+
+            <select   value={addProductData.supplier}
+              onChange={(event) => setAddProductData({ ...addProductData, supplier: event.target.value })}>
+              {supplierPayload.map(x=>(<option key={x._id} value={x._id}>{x.supplierName}</option>))}
+            </select>
             <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:justify-end">
               <button type="button" onClick={closeModal} className="h-12 rounded-lg border border-[#C5C6CD] px-4 text-sm font-medium text-[#45474C]">
                 Cancel
               </button>
-              <Button type="submit" className="w-auto px-5">Add Product</Button>
+              <Button type="submit" className="w-auto px-5">
+                Add Product
+              </Button>
             </div>
           </form>
         </div>
@@ -208,7 +288,13 @@ function Products() {
             <h2 className="text-xl font-semibold text-[#191C1E]">Edit Product</h2>
             <p className="text-sm text-[#45474C]">Update the product details below.</p>
           </div>
-          <form className="space-y-4" onSubmit={handleSaveProduct}>
+          <form
+            className="space-y-4"
+            onSubmit={(event) => {
+              event.preventDefault();
+              handleSaveProduct(tokenPayload.token, formData, editingProduct?._id || editingProduct?.id);
+            }}
+          >
             <Input
               className="w-full"
               id="editProductName"

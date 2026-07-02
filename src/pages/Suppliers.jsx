@@ -7,15 +7,20 @@ import { addSupplier, editSupplier, getSuppliers, deleteSupplier } from "../util
 import { TokenContext } from "../context/TokenContext";
 import PageLoader from "./PageLoader";
 import Input from "../components/Input";
+import { SupplierContext, SupplierDispatchContext } from "../context/SupplierContext";
 
 export default function Suppliers() {
 
   const tokenPayload = useContext(TokenContext)
+  const supplierPayload = useContext(SupplierContext)
+  const supplierDispatch = useContext(SupplierDispatchContext)
+
+  console.log(supplierPayload)
 
   const [isAddSupplierModalOpen, setIsAddSupplierModalOpen] = useState(false);
   const [isEditSupplierModalOpen, setIsEditSupplierModalOpen] = useState(false);
 
-  const [suppliers, setSuppliers] = useState([]);
+  const [suppliers, setSuppliers] = useState(supplierPayload || []);
   const [isLoading, setIsLoading] = useState(false);
 
   const [addSupplierData, setAddSupplierData] = useState({
@@ -60,6 +65,11 @@ export default function Suppliers() {
 
       if (newSupplier) {
         setSuppliers((prevSuppliers) => [...prevSuppliers, newSupplier.data]);
+        supplierDispatch({
+          action: "add",
+          payload: newSupplier
+        })
+
       }
 
       closeModal();
@@ -108,24 +118,24 @@ export default function Suppliers() {
     }
   }
 
-  useEffect(() => {
-    async function call() {
-      try {
-        setIsLoading(true);
-        const response = await getSuppliers(tokenPayload.token);
-        console.log(response);
-        if (response) {
-          setSuppliers(response.data);
-        }
-      } catch (error) {
-        console.log(error);
-      } finally {
-        setIsLoading(false);
-      }
-    }
+  // useEffect(() => {
+  //   async function call() {
+  //     try {
+  //       setIsLoading(true);
+  //       const response = await getSuppliers(tokenPayload.token);
+  //       console.log(response);
+  //       if (response) {
+  //         setSuppliers(response.data);
+  //       }
+  //     } catch (error) {
+  //       console.log(error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   }
 
-    call();
-  }, []);
+  //   call();
+  // }, []);
 
   if (isLoading) {
     return <PageLoader />;

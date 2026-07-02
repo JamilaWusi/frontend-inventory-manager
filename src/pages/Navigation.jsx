@@ -9,15 +9,17 @@ import Login from "./Login";
 import AdminPanel from "../components/Admin";
 import { useContext, useEffect, useState } from "react";
 import { TokenContext } from "../context/TokenContext";
-import { getProfile } from "../utils/fn";
+import { getProfile, getSuppliers } from "../utils/fn";
 import { profileDispatchContext } from "../context/ProfileContext";
 import PageLoader from "./PageLoader";
+import { SupplierDispatchContext } from "../context/SupplierContext";
 
 
 export default function Navigation() {
 
     const tokenPayload = useContext(TokenContext)
     const profileDispatch = useContext(profileDispatchContext)
+    const suppliersDispatch = useContext(SupplierDispatchContext)
     const [isLoading, setIsLoading] = useState(false)
 
 
@@ -41,6 +43,26 @@ export default function Navigation() {
             }
         }
         call()
+    }, [tokenPayload])
+
+    useEffect(() => {
+        async function fetchSuppliers() {
+            try {
+                if (tokenPayload.token) {
+                    const response = await getSuppliers(tokenPayload.token)
+                    console.log(response)
+                    if (response) {
+                        suppliersDispatch({
+                            type: "loggedIn",
+                            payload: response.data
+                        })
+                    }
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchSuppliers()
     }, [tokenPayload])
 
     if (isLoading) {
@@ -71,10 +93,10 @@ export default function Navigation() {
                             element={<Inventory />}
                         />
 
-                        {/* <Route
+                        <Route
                             path="/admin"
-                            element={<AdminPanel  />}
-                        /> */}
+                            element={<AdminPanel />}
+                        />
 
                         <Route
                             path="/*"

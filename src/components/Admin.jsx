@@ -148,12 +148,12 @@ export default function AdminPanel({
             </p>
           </div>
           <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
-            <button
+            {/* <button
               onClick={onBack}
               className="rounded bg-slate-200 px-4 py-2 text-sm text-slate-800 hover:bg-slate-300"
             >
               Back to Landing
-            </button>
+            </button> */}
             <button
               onClick={onLogout}
               className="rounded bg-red-600 px-4 py-2 text-sm text-white hover:bg-red-700"

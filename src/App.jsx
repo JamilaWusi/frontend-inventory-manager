@@ -1,4 +1,5 @@
 import ProfileProvider from "./context/ProfileContext";
+import SupplierProvider from "./context/SupplierContext";
 import TokenProvider from "./context/TokenContext";
 import Navigation from "./pages/Navigation";
 
@@ -7,9 +8,11 @@ function App() {
 
   return (
     <TokenProvider>
-      <ProfileProvider>
-        <Navigation />
-      </ProfileProvider>
+      <SupplierProvider>
+        <ProfileProvider>
+          <Navigation />
+        </ProfileProvider>
+      </SupplierProvider>
     </TokenProvider>
   );
 }

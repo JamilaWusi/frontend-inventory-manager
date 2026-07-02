@@ -22,7 +22,7 @@ function Navbar() {
     },
     {
       to: "/admin",
-      label: "Admin"
+      label: "Profile"
     }
   ]
 
@@ -70,7 +70,7 @@ function Navbar() {
             }
           >
             <FiUser />
-            <span className="hidden sm:inline">Admin</span>
+            <span className="hidden sm:inline">Profile</span>
           </NavLink>
         </div>
       </div>

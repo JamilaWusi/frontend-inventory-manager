@@ -111,6 +111,7 @@ export async function addProduct(token, data) {
       return response
    } catch (error) {
       console.log(error);
+      throw error;
    }
 }
 
@@ -149,6 +150,18 @@ export async function deleteProduct(token, productId) {
       const response = await res.json();
       console.log(response);
       return response
+   } catch (error) {
+      console.log(error);
+   }
+}
+
+export async function handleSaveProduct(token, data, productId) {
+   try {
+      if (productId) { 
+         return await editProduct(token, productId, data);
+      } else {
+         return await addProduct(token, data);
+      }
    } catch (error) {
       console.log(error);
    }

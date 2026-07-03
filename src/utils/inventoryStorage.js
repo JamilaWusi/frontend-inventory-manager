@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/utils/inventoryStorage.js
 const INVENTORY_STORAGE_KEY = "inventory-manager-data";
 
 export const defaultInventoryData = {

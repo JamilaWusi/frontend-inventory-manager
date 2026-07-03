@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/pages/CriticalStock.jsx
 function CriticalStock() {
   return (
     <div className="p-8">

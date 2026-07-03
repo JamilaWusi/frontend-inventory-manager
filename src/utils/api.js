@@ -1,6 +1,9 @@
+// frontend-inventory-manager/src/utils/api.js
 import axios from 'axios';
 
-const baseURL = 'https://shop-inventory-manager-1.onrender.com'
+// const baseURL = 'https://shop-inventory-manager-1.onrender.com'
+
+const baseURL = 'http://localhost:8080' 
 
 const client = axios.create({
     baseURL,

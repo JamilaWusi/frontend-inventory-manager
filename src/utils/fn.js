@@ -1,7 +1,7 @@
+// frontend-inventory-manager/src/utils/fn.js
+// const baseURL = 'https://shop-inventory-manager-1.onrender.com'
 
-const baseURL = 'https://shop-inventory-manager-1.onrender.com'
-
-const baseURL = 'http://localhost:8080'
+const baseURL = 'http://localhost:8080' 
 
 export async function register(data) {
   const res = await fetch(`${baseURL}/api/auth/register`, {
@@ -69,6 +69,107 @@ export async function getProfile(token) {
    }
 }
 
+// export async function getProducts(token) {
+//    try {
+//       const res = await fetch(`${baseURL}/api/products`, {
+//          method: "GET",
+//          headers: {
+//             "Authorization": `Bearer ${token}`
+//          }
+//       })
+
+//       if (!res.ok) {
+//          const error = new Error("Request failed");
+//          error.statusCode = res.status;
+//          error.data = await res.json().catch(() => null);
+
+//          throw error;
+//       }
+
+//       const responseData = await res.json()
+//       return responseData
+
+//    } catch (error) {
+//       console.log(error)
+//    }
+// }
+
+// export async function addProduct(token, data) {
+//    try {
+//       const res = await fetch(`${baseURL}/api/products`, {
+//          method: "POST",
+//          body: JSON.stringify(data),
+//          headers: {
+//             "Content-type": "Application/json",
+//             "Authorization": `Bearer ${token}`
+//          }
+//       });
+//       if (!res.ok) {
+//          throw new Error();
+//       }
+//       const response = await res.json();
+//       console.log(response);
+//       return response
+//    } catch (error) {
+//       console.log(error);
+//       throw error;
+//    }
+// }
+
+
+// export async function addProduct(token, data) {
+//    try {
+//       const res = await fetch(`${baseURL}/api/products`, {
+//          method: "POST",
+//          body: JSON.stringify(data),
+//          headers: {
+//             "Content-Type": "application/json",  // Fixed: was "Application/json"
+//             "Authorization": `Bearer ${token}`
+//          }
+//       });
+      
+//       const response = await res.json();
+      
+//       if (!res.ok) {
+//          console.error('Server error:', response);
+//          throw new Error(response.message || 'Failed to add product');
+//       }
+      
+//       console.log('Product added:', response);
+//       return response;
+//    } catch (error) {
+//       console.error('Add product error:', error);
+//       throw error;
+//    }
+// }
+
+
+
+
+
+
+
+// export async function editProduct(token, productId, data) {
+//    try {
+//       const res = await fetch(`${baseURL}/api/products/${productId}`, {
+//          method: "PATCH",
+//          body: JSON.stringify(data),
+//          headers: {
+//             "Content-type": "application/json",
+//             "Authorization": `Bearer ${token}`
+//          }
+//       });
+//       const response = await res.json();
+//       if (!res.ok) {
+//          throw new Error();
+//       }
+//       console.log(response);
+//       return response
+//    } catch (error) {
+//       console.log(error);
+//    }
+// }
+
 export async function getProducts(token) {
    try {
       const res = await fetch(`${baseURL}/api/products`, {
@@ -76,23 +177,27 @@ export async function getProducts(token) {
          headers: {
             "Authorization": `Bearer ${token}`
          }
-      })
+      });
 
       if (!res.ok) {
          const error = new Error("Request failed");
          error.statusCode = res.status;
          error.data = await res.json().catch(() => null);
-
          throw error;
       }
 
-      const responseData = await res.json()
-      return responseData
+      const responseData = await res.json();
+      console.log("getProducts response:", responseData);
+      return responseData;
 
    } catch (error) {
-      console.log(error)
+      console.log("getProducts error:", error);
+      throw error;
    }
 }
+
+
+ 
 
 export async function addProduct(token, data) {
    try {
@@ -100,18 +205,21 @@ export async function addProduct(token, data) {
          method: "POST",
          body: JSON.stringify(data),
          headers: {
-            "Content-type": "Application/json",
+            "Content-Type": "application/json",  // Fixed
             "Authorization": `Bearer ${token}`
          }
       });
-      if (!res.ok) {
-         throw new Error();
-      }
+      
       const response = await res.json();
-      console.log(response);
-      return response
+      
+      if (!res.ok) {
+         console.error('Server response:', response);
+         throw new Error(response.message || 'Failed to add product');
+      }
+      
+      return response;
    } catch (error) {
-      console.log(error);
+      console.error('Add product error:', error);
       throw error;
    }
 }
@@ -119,21 +227,75 @@ export async function addProduct(token, data) {
 export async function editProduct(token, productId, data) {
    try {
       const res = await fetch(`${baseURL}/api/products/${productId}`, {
-         method: "PATCH",
+         method: "PUT",  // Changed from PATCH to PUT to match your backend
          body: JSON.stringify(data),
          headers: {
-            "Content-type": "Application/json",
+            "Content-Type": "application/json",  // Fixed
             "Authorization": `Bearer ${token}`
          }
       });
+      
       const response = await res.json();
+      
       if (!res.ok) {
-         throw new Error();
+         console.error('Server response:', response);
+         throw new Error(response.message || 'Failed to update product');
       }
-      console.log(response);
-      return response
+      
+      return response;
    } catch (error) {
-      console.log(error);
+      console.error('Edit product error:', error);
+      throw error;
+   }
+}
+
+export async function addSupplier(token, data) {
+   try {
+      const res = await fetch(`${baseURL}/api/suppliers`, {
+         method: "POST",
+         body: JSON.stringify(data),
+         headers: {
+            "Content-Type": "application/json",  // Fixed
+            "Authorization": `Bearer ${token}`
+         }
+      });
+      
+      const response = await res.json();
+      
+      if (!res.ok) {
+         console.error('Server response:', response);
+         throw new Error(response.message || 'Failed to add supplier');
+      }
+      
+      return response;
+   } catch (error) {
+      console.error('Add supplier error:', error);
+      throw error;
+   }
+}
+
+export async function editSupplier(token, supplierId, data) {
+   try {
+      const res = await fetch(`${baseURL}/api/suppliers/${supplierId}`, {
+         method: "PUT",
+         body: JSON.stringify(data),
+         headers: {
+            "Content-Type": "application/json",  // Fixed
+            "Authorization": `Bearer ${token}`
+         }
+      });
+      
+      const response = await res.json();
+      
+      if (!res.ok) {
+         console.error('Server response:', response);
+         throw new Error(response.message || 'Failed to update supplier');
+      }
+      
+      return response;
+   } catch (error) {
+      console.error('Edit supplier error:', error);
+      throw error;
    }
 }
 
@@ -193,47 +355,47 @@ export async function getSuppliers(token) {
    }
 }
 
-export async function addSupplier(token, data) {
-   try {
-      const res = await fetch(`${baseURL}/api/suppliers`, {
-         method: "POST",
-         body: JSON.stringify(data),
-         headers: {
-            "Content-type": "Application/json",
-            "Authorization": `Bearer ${token}`
-         }
-      });
-      if (!res.ok) {
-         throw new Error();
-      }
-      const response = await res.json();
-      console.log(response);
-      return response
-   } catch (error) {
-      console.log(error);
-   }
-}
+// export async function addSupplier(token, data) {
+//    try {
+//       const res = await fetch(`${baseURL}/api/suppliers`, {
+//          method: "POST",
+//          body: JSON.stringify(data),
+//          headers: {
+//             "Content-type": "application/json",
+//             "Authorization": `Bearer ${token}`
+//          }
+//       });
+//       if (!res.ok) {
+//          throw new Error();
+//       }
+//       const response = await res.json();
+//       console.log(response);
+//       return response
+//    } catch (error) {
+//       console.log(error);
+//    }
+// }
 
-export async function  editSupplier(token, supplierId, data) {
-   try {
-      const res = await fetch(`${baseURL}/api/suppliers/${supplierId}`, {
-         method: "PUT",
-         body: JSON.stringify(data),
-         headers: {
-            "Content-type": "Application/json",
-            "Authorization": `Bearer ${token}`
-         }
-      });
-      if (!res.ok) {
-         throw new Error();
-      }
-      const response = await res.json();
-      console.log(response);
-      return response
-   } catch (error) {
-      console.log(error);
-   }
-}
+// export async function  editSupplier(token, supplierId, data) {
+//    try {
+//       const res = await fetch(`${baseURL}/api/suppliers/${supplierId}`, {
+//          method: "PUT",
+//          body: JSON.stringify(data),
+//          headers: {
+//             "Content-type": "application/json",
+//             "Authorization": `Bearer ${token}`
+//          }
+//       });
+//       if (!res.ok) {
+//          throw new Error();
+//       }
+//       const response = await res.json();
+//       console.log(response);
+//       return response
+//    } catch (error) {
+//       console.log(error);
+//    }
+// }
 
 export async function deleteSupplier(token, supplierId) {
    try {

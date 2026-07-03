@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/components/Input.jsx
 import { useState } from "react"
 import { FaEye } from 'react-icons/fa'
 import { HiEyeOff } from 'react-icons/hi'

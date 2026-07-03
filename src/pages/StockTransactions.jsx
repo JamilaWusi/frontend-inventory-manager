@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/pages/StockTransactions.jsx
 import { useMemo, useState } from "react";
 import { FiPackage, FiRefreshCw, FiTrash2 } from "react-icons/fi";
 import { deleteInventoryTransaction, getInventoryData, recordInventoryTransaction } from "../utils/inventoryStorage";

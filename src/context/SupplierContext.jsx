@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/context/SupplierContext.jsx
 import { createContext, useReducer } from "react";
 
 export const SupplierContext = createContext(null);

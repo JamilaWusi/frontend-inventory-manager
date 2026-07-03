@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/delete.jsx
 import { useState } from "react";
 import ProductTable from "./ProductTable";
 

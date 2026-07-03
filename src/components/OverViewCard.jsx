@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/components/OverViewCard.jsx
 function OverViewCard() {
   const cards = [
     {

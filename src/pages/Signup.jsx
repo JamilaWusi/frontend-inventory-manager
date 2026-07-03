@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/pages/Signup.jsx
 import { useState } from "react";
 import Input from "../components/Input";
 import { MdOutlineMail, MdOutlinePersonOutline, MdOutlinePhone } from "react-icons/md";

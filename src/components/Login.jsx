@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/components/Login.jsx
 import React from "react";
 
 function LoginPage({ onLogin }) {

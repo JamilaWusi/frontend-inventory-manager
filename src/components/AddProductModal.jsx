@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/components/AddProductModal.jsx
 import { useState, useEffect } from "react";
 
 function AddProductModal({

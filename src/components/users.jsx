@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/components/user.jsx
 import { useState } from "react";
 
 export default function UsersManager({ users = [], onAddUser, onDeleteUser, currentUser }) {

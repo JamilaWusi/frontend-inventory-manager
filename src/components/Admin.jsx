@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/components/Admin.jsx
 import { useContext, useEffect, useState } from "react";
 import { ProfileContext } from "../context/ProfileContext";
 import { TokenDispatchContext } from "../context/TokenContext";

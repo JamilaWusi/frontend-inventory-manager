@@ -1,4 +1,4 @@
-
+// frontend-inventory-manager/src/pages/Landing.jsx
 
 export default function Landing({ onGetStarted, onViewDemo }) {
   return (

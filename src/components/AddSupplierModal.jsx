@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/components/AddSupplierModal.jsx
 import { useState, useEffect } from "react";
 import { MdOutlinePersonOutline, MdOutlinePhone, MdOutlineMail, MdOutlineLocationOn, MdOutlineBadge } from "react-icons/md";
 import Modal from "./Modal";

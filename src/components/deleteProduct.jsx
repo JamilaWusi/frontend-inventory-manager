@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/components/deleteProduct.jsx
 import { useState } from "react";
 
 export default function InventoryManager() {

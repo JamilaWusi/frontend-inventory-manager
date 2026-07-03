@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/components/Modal.jsx
 import { useRef, useEffect } from 'react';
 
 export default function Modal({

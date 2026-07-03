@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/components/ProductTable.jsx
 import { FiTrash2 } from "react-icons/fi";
 import { MdOutlineInventory2 } from "react-icons/md";
 

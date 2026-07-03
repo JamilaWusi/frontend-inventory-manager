@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/context/ProfileContext.jsx
 import { createContext, useReducer } from "react";
 
 export const ProfileContext = createContext(null);

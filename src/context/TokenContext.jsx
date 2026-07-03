@@ -1,3 +1,4 @@
+// frontend-inventory-manager/src/context/TokenContext.jsx
 import { createContext, useReducer } from "react";
 
 export const TokenContext = createContext(null)
